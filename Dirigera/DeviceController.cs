@@ -5,7 +5,7 @@ using ApiLibs;
 
 namespace Tomidix.NetStandard.Dirigera;
 
-public class DeviceController : SubService
+public class DeviceController : SubService<DirigeraController>
 {
     private Service service;
     public DeviceController(DirigeraController controller) : base(controller)
@@ -13,11 +13,7 @@ public class DeviceController : SubService
         service = controller;
     }
 
-    public Task<List<Device>> GetDevices() => MakeRequest<List<Device>>("devices/").ContinueWith((item) => item.Result.Select(i =>
-    {
-        i.service = service;
-        return i;
-    }).ToList());
+    public Task<List<Device>> GetDevices() => MakeRequest<List<Device>>("devices/");
     public Task<string> GetDevicesJson() => MakeRequest<string>("devices/");
 
     public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : PostingAttributesProperties => MakeRequest<string>("devices/" + deviceId, Call.PATCH, content: new object[] { attributes }, statusCode: System.Net.HttpStatusCode.Accepted);
@@ -45,7 +41,7 @@ public class DeviceController : SubService
     }));
 
 
-    public Task<string> SetLightTemperature(Light l, int temperature) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
+    public Task<string> SetColorTemperature(Light l, int temperature) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
         {
             l.Attributes.ColorTemperature = temperature;
             return a.Result;

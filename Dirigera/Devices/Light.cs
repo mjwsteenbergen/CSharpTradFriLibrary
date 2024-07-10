@@ -20,17 +20,17 @@ public class Light : Device
 
     public Task Toggle()
     {
-        return (service as DirigeraController)?.DeviceController.Toggle(this) ?? Task.CompletedTask;
+        return Service.DeviceController.Toggle(this) ?? Task.CompletedTask;
     }
 
     public Task SetLightLevel(int lightLevel)
     {
-        return (service as DirigeraController)?.DeviceController.SetLightLevel(this, lightLevel) ?? Task.CompletedTask;
+        return Service.DeviceController.SetLightLevel(this, lightLevel) ?? Task.CompletedTask;
     }
 
-    public Task SetLightTemperature(int lightTemperature)
+    public Task SetLightTemperature(int colorTemperature)
     {
-        return (service as DirigeraController)?.DeviceController.SetLightTemperature(this, lightTemperature) ?? Task.CompletedTask;
+        return Service.DeviceController.SetColorTemperature(this, colorTemperature) ?? Task.CompletedTask;
     }
 }
 

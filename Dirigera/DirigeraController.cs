@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Tomidix.NetStandard.Dirigera;
 
-public class DirigeraController : Service
+public class DirigeraController : RestSharpService
 {
     public DirigeraController(string hostUrl) : base(hostUrl + ":8443/v1")
     {

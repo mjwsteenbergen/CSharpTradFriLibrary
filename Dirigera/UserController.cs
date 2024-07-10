@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Tomidix.NetStandard.Dirigera;
 
-public class UserController : SubService
+public class UserController : SubService<DirigeraController>
 {
     public UserController(DirigeraController controller) : base(controller)
     {

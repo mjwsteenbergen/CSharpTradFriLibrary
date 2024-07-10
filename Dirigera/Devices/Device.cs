@@ -12,13 +12,13 @@ public class DeviceConverter : JsonConverter<Device>
     {
         JToken jObject = JToken.ReadFrom(reader);
 
-        string type = null;
+        string type = "";
 
         try
         {
             if (jObject.Type is not JTokenType.None and not JTokenType.Null)
             {
-                type = jObject["deviceType"].ToObject<string>();
+                type = jObject["deviceType"]?.ToObject<string>() ?? "";
             }
         }
         catch { }
@@ -48,7 +48,7 @@ public class DeviceConverter : JsonConverter<Device>
             if (customAttributes.Length > 0)
             {
                 var myAttribute = customAttributes[0];
-                string propName = myAttribute.PropertyName;
+                string? propName = myAttribute.PropertyName;
 
                 if (!string.IsNullOrEmpty(propName))
                 {
@@ -58,7 +58,6 @@ public class DeviceConverter : JsonConverter<Device>
                 {
                     writer.WritePropertyName(info.Name);
                 }
-                // TODO: Do something with the value
             }
             else
             {
@@ -74,7 +73,7 @@ public class DeviceConverter : JsonConverter<Device>
 
     public override void WriteJson(JsonWriter writer, Device value, JsonSerializer serializer)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }
 

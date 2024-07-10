@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using ApiLibs.General;
 using Newtonsoft.Json;
@@ -6,10 +7,10 @@ using Tomidix.NetStandard.Dirigera.Controller;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
-public class DeviceConverter : JsonConverter<Device>
+public class DeviceConverter : JsonConverter<DirigeraDevice>
 
 {
-    public override Device ReadJson(JsonReader reader, Type objectType, Device existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override DirigeraDevice ReadJson(JsonReader reader, Type objectType, [AllowNull] DirigeraDevice existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         JToken jObject = JToken.ReadFrom(reader);
 
@@ -24,12 +25,14 @@ public class DeviceConverter : JsonConverter<Device>
         }
         catch { }
 
-        Device result = type switch
+        DirigeraDevice result = type switch
         {
             "environmentSensor" => new EnvironmentSensor(),
             "gateway" => new Gateway(),
             "light" => new Light(),
-            _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + jObject.ToString())
+            "motionSensor" => new MotionSensor(),
+            "lightSensor" => new LightSensor(),
+            _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + "\n" + jObject.ToString())
         };
 
 
@@ -37,42 +40,9 @@ public class DeviceConverter : JsonConverter<Device>
         return result;
     }
 
-    public override bool CanWrite => true;
+    public override bool CanWrite => false;
 
-    public void Serialize(PropertyInfo info, Device value, JsonWriter writer)
-    {
-        var val = info.GetValue(value);
-
-        if (val != null)
-        {
-            var customAttributes = (JsonPropertyAttribute[])info.GetCustomAttributes(typeof(JsonPropertyAttribute), true);
-            if (customAttributes.Length > 0)
-            {
-                var myAttribute = customAttributes[0];
-                string? propName = myAttribute.PropertyName;
-
-                if (!string.IsNullOrEmpty(propName))
-                {
-                    writer.WritePropertyName(propName);
-                }
-                else
-                {
-                    writer.WritePropertyName(info.Name);
-                }
-            }
-            else
-            {
-                writer.WritePropertyName(info.Name);
-            }
-
-            writer.WriteRawValue(JsonConvert.SerializeObject(val, Formatting.None, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            }));
-        }
-    }
-
-    public override void WriteJson(JsonWriter writer, Device value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, [AllowNull] DirigeraDevice value, JsonSerializer serializer)
     {
         throw new NotImplementedException();
     }
@@ -81,9 +51,8 @@ public class DeviceConverter : JsonConverter<Device>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 [JsonConverter(typeof(DeviceConverter))]
-public class Device : ObjectSearcher<DirigeraController>
+public class DirigeraDevice : ObjectSearcher<DirigeraController>
 {
-
     [JsonProperty("id")]
     public string Id { get; set; }
 

@@ -3,24 +3,40 @@ using System.Security.Cryptography;
 using System.Text;
 using ApiLibs;
 using Newtonsoft.Json;
+using RestSharp;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
 
 public class DirigeraController : RestSharpService
 {
-    public DirigeraController(string hostUrl) : base(hostUrl + ":8443/v1")
+    internal string hostUrl;
+    internal string? token;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="hostUrl">ONLY THE IP e.g. "192.168.0.123"</param>
+    public DirigeraController(string hostUrl) : base(new RestClientOptions
     {
+        BaseUrl = new Uri("https://" + hostUrl + ":8443/v1"),
+        RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+    })
+    {
+        this.hostUrl = hostUrl;
         UserController = new UserController(this);
         DeviceController = new DeviceController(this);
+        EventController = new EventController(this);
     }
 
     public DirigeraController(string hostUrl, string token) : this(hostUrl)
     {
+        this.token = token;
         AddStandardHeader(new Param("Authorization", "Bearer " + token));
     }
 
     public UserController UserController { get; set; }
     public DeviceController DeviceController { get; set; }
+    public EventController EventController { get; set; }
 
     public static readonly string CODE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
     public static readonly int CODE_LENGTH = 128;

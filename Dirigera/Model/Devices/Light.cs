@@ -4,7 +4,7 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-public class Light : Device
+public class Light : DirigeraDevice
 {
     [JsonProperty("attributes")]
     public LightAttributes Attributes { get; set; }

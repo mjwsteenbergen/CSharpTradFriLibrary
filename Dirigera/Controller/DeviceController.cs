@@ -2,6 +2,8 @@ using ApiLibs.General;
 using Tomidix.NetStandard.Dirigera.Devices;
 using Newtonsoft.Json;
 using ApiLibs;
+using Tomidix.NetStandard.Dirigera.Model.Attributes;
+using Martijn.Extensions.Linq;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
 
@@ -13,10 +15,27 @@ public class DeviceController : SubService<DirigeraController>
         service = controller;
     }
 
-    public Task<List<Device>> GetDevices() => MakeRequest<List<Device>>("devices/");
+    public Task<List<DirigeraDevice>> GetDevices() => MakeRequest<List<DirigeraDevice>>("devices/").ContinueWith(task =>
+    {
+        task.Result.OfType<LightSensor>().Foreach(lightsensor =>
+        {
+            var motionSensorMatch = task.Result
+                .OfType<MotionSensor>()
+                .FirstOrDefault(motionsensor => motionsensor.Attributes.SerialNumber.Equals(lightsensor.Attributes.SerialNumber));
+
+            if (motionSensorMatch != null)
+            {
+                lightsensor.Attributes.CustomName = motionSensorMatch.Attributes.CustomName;
+            }
+        });
+
+        task.Result.Foreach(i => i.Search(Service));
+
+        return task.Result;
+    });
     public Task<string> GetDevicesJson() => MakeRequest<string>("devices/");
 
-    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : PostingAttributesProperties => MakeRequest<string>("devices/" + deviceId, Call.PATCH, content: new object[] { attributes }, statusCode: System.Net.HttpStatusCode.Accepted);
+    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => MakeRequest<string>("devices/" + deviceId, Call.PATCH, content: new object[] { attributes }, statusCode: System.Net.HttpStatusCode.Accepted);
 
     public Task<string> Toggle(Light l) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
     {
@@ -24,7 +43,7 @@ public class DeviceController : SubService<DirigeraController>
         return a.Result;
     });
 
-    public Task<string> Toggle(string id, bool isOn) => ChangeAttributes(id, new PostingAttributes<ToggleProperty>(new ToggleProperty
+    public Task<string> Toggle(string id, bool isOn) => ChangeAttributes(id, new PostingAttributes<ToggleAttribute>(new ToggleAttribute
     {
         IsOn = isOn
     }));
@@ -35,7 +54,7 @@ public class DeviceController : SubService<DirigeraController>
             return a.Result;
         });
 
-    public Task<string> SetLightLevel(string id, int level) => ChangeAttributes(id, new PostingAttributes<LightLevelProperty>(new LightLevelProperty
+    public Task<string> SetLightLevel(string id, int level) => ChangeAttributes(id, new PostingAttributes<LightLevelAttribute>(new LightLevelAttribute
     {
         LightLevel = level
     }));
@@ -47,18 +66,27 @@ public class DeviceController : SubService<DirigeraController>
             return a.Result;
         });
 
-    public Task<string> SetLightTemperature(string id, int temperature) => ChangeAttributes(id, new PostingAttributes<LightTemperatureProperty>(new LightTemperatureProperty
+    public Task<string> SetLightTemperature(string id, int temperature) => ChangeAttributes(id, new PostingAttributes<ColorTemperatureAttribute>(new ColorTemperatureAttribute
     {
         ColorTemperature = temperature
     }));
 
+    public Task SetMotionDetectedDelay(MotionSensor motionSensor, int delay) => SetMotionDetectedDelay(motionSensor.Id, delay).ContinueWith(result =>
+    {
+        motionSensor.Attributes.MotionDetectedDelay = delay;
+    });
+
+    public Task SetMotionDetectedDelay(string id, int delay) => ChangeAttributes(id, new PostingAttributes<MotionDetectedDelayAttribute>(new MotionDetectedDelayAttribute
+    {
+        MotionDetectedDelay = delay
+    }));
 }
 
-public class PostingAttributes<T> where T : PostingAttributesProperties
+public class PostingAttributes<T> where T : DirigeraAttribute
 {
     public PostingAttributes(T properties, int? transitionTime = null)
     {
-        // TransitionTime = transitionTime;
+        TransitionTime = transitionTime;
         Attributes = properties;
     }
 
@@ -68,30 +96,6 @@ public class PostingAttributes<T> where T : PostingAttributesProperties
 
     [JsonProperty("transitionTime")]
     public int? TransitionTime { get; set; }
-}
-
-public interface PostingAttributesProperties
-{
-
-}
-
-public class ToggleProperty : PostingAttributesProperties
-{
-    [JsonProperty("isOn")]
-    public required bool IsOn { get; set; }
-}
-
-
-public class LightLevelProperty : PostingAttributesProperties
-{
-    [JsonProperty("lightLevel")]
-    public required int LightLevel { get; set; }
-}
-
-public class LightTemperatureProperty : PostingAttributesProperties
-{
-    [JsonProperty("colorTemperature")]
-    public required int ColorTemperature { get; set; }
 }
 
 

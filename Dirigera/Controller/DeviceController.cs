@@ -3,7 +3,7 @@ using Tomidix.NetStandard.Dirigera.Devices;
 using Newtonsoft.Json;
 using ApiLibs;
 
-namespace Tomidix.NetStandard.Dirigera;
+namespace Tomidix.NetStandard.Dirigera.Controller;
 
 public class DeviceController : SubService<DirigeraController>
 {

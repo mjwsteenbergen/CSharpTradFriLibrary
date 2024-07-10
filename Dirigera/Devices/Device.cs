@@ -2,6 +2,7 @@ using System.Reflection;
 using ApiLibs.General;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Tomidix.NetStandard.Dirigera.Controller;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 

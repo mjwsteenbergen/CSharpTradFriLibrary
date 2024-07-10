@@ -6,7 +6,7 @@ using ApiLibs.General;
 using ApiLibs.GitHub;
 using Newtonsoft.Json;
 
-namespace Tomidix.NetStandard.Dirigera;
+namespace Tomidix.NetStandard.Dirigera.Controller;
 
 public class UserController : SubService<DirigeraController>
 {

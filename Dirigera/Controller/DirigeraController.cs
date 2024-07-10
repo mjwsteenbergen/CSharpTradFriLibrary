@@ -4,7 +4,7 @@ using System.Text;
 using ApiLibs;
 using Newtonsoft.Json;
 
-namespace Tomidix.NetStandard.Dirigera;
+namespace Tomidix.NetStandard.Dirigera.Controller;
 
 public class DirigeraController : RestSharpService
 {

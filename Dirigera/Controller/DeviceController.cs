@@ -35,7 +35,13 @@ public class DeviceController : SubService<DirigeraController>
     });
     public Task<string> GetDevicesJson() => MakeRequest<string>("devices/");
 
-    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => MakeRequest<string>("devices/" + deviceId, Call.PATCH, content: new object[] { attributes }, statusCode: System.Net.HttpStatusCode.Accepted);
+    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => MakeRequest(new Request<string>("devices/" + deviceId)
+            {
+                Content =  new object[] { attributes },
+                Method = Call.PATCH,
+                ExpectedStatusCode = System.Net.HttpStatusCode.Accepted,
+                MaxRetries = 2
+            });
 
     public Task<string> Toggle(Light l) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
     {

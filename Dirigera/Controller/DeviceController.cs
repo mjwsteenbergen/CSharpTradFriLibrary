@@ -36,12 +36,12 @@ public class DeviceController : SubService<DirigeraController>
     public Task<string> GetDevicesJson() => MakeRequest<string>("devices/");
 
     public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => MakeRequest(new Request<string>("devices/" + deviceId)
-            {
-                Content =  new object[] { attributes },
-                Method = Call.PATCH,
-                ExpectedStatusCode = System.Net.HttpStatusCode.Accepted,
-                MaxRetries = 2
-            });
+    {
+        Content = new object[] { attributes },
+        Method = Call.PATCH,
+        ExpectedStatusCode = System.Net.HttpStatusCode.Accepted,
+        MaxRetries = 2
+    });
 
     public Task<string> Toggle(Light l) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
     {
@@ -66,7 +66,7 @@ public class DeviceController : SubService<DirigeraController>
     }));
 
 
-    public Task<string> SetColorTemperature(Light l, int temperature) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
+    public Task<string> SetLightTemperature(Light l, int temperature) => SetLightTemperature(l.Id, temperature).ContinueWith((a) =>
         {
             l.Attributes.ColorTemperature = temperature;
             return a.Result;

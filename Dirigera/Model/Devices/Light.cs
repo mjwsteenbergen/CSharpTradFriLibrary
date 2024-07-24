@@ -31,7 +31,7 @@ public class Light : DirigeraDevice
 
     public Task SetLightTemperature(int colorTemperature)
     {
-        return Service.DeviceController.SetColorTemperature(this, colorTemperature) ?? Task.CompletedTask;
+        return Service.DeviceController.SetLightTemperature(this, colorTemperature) ?? Task.CompletedTask;
     }
 }
 

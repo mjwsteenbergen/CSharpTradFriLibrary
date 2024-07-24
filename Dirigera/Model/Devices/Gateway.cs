@@ -17,6 +17,8 @@ public class Gateway : DirigeraDevice
     [JsonProperty("attributes")]
     public GatewayAttributes Attributes { get; set; }
 
+    public override string GetName() => Attributes.CustomName;
+
     public override string ToString()
     {
         return Attributes.CustomName;

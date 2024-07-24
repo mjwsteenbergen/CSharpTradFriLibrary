@@ -16,6 +16,8 @@ public class MotionSensor : DirigeraDevice
     {
         return Service.DeviceController.SetMotionDetectedDelay(this, delay);
     }
+    
+    public override string GetName() => Attributes.CustomName;
 
     public override string ToString()
     {

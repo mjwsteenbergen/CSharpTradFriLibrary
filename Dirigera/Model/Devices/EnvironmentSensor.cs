@@ -15,6 +15,8 @@ public class EnvironmentSensor : DirigeraDevice
     [JsonProperty("room")]
     public Room Room { get; set; }
 
+    public override string GetName() => Attributes.CustomName;
+
     public override string ToString()
     {
         return Attributes.CustomName;

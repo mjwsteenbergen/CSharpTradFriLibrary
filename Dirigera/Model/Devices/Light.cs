@@ -11,6 +11,7 @@ public class Light : DirigeraDevice
 
     [JsonProperty("room")]
     public Room Room { get; set; }
+    public override string GetName() => Attributes.CustomName;
 
     public override string ToString()
     {

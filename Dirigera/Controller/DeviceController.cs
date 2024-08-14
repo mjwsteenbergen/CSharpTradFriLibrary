@@ -15,6 +15,8 @@ public class DeviceController : SubService<DirigeraController>
         service = controller;
     }
 
+    public Task<DirigeraDevice> GetDevice(string id) => MakeRequest<DirigeraDevice>($"devices/{id}");
+
     public Task<List<DirigeraDevice>> GetDevices() => MakeRequest<List<DirigeraDevice>>("devices/").ContinueWith(task =>
     {
         task.Result.OfType<LightSensor>().Foreach(lightsensor =>

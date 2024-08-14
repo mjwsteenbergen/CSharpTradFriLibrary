@@ -59,17 +59,17 @@ public class Light : DirigeraDevice
 
     public Task Toggle()
     {
-        return Service.DeviceController.Toggle(this) ?? Task.CompletedTask;
+        return Service.DeviceController.Toggle(this);
     }
 
     public Task SetLightLevel(int lightLevel)
     {
-        return Service.DeviceController.SetLightLevel(this, lightLevel) ?? Task.CompletedTask;
+        return Service.DeviceController.SetLightLevel(this, lightLevel);
     }
 
     public Task SetLightTemperature(int colorTemperature)
     {
-        return Service.DeviceController.SetLightTemperature(this, colorTemperature) ?? Task.CompletedTask;
+        return Service.DeviceController.SetLightTemperature(this, colorTemperature);
     }
 }
 

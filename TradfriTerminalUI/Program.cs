@@ -54,12 +54,14 @@ namespace TradfriTerminalUI
         {
             var controller = new DirigeraController(data.IPAddress!, data.AccessToken!);
 
+            AnsiConsole.MarkupLine("Trying to connect to your Dirigera Hub");
+
             var me = await controller.UserController.GetMe();
 
             AnsiConsole.MarkupLine("Hi, " + me.Name);
 
             // var devices = await controller.DeviceController.GetDevices();
-            await MainLoop(controller, new List<DirigeraDevice>());
+            await MainLoop(controller, []);
 
             // AnsiConsole.MarkupLine(Markup.Escape(devices));
 

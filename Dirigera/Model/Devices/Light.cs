@@ -1,6 +1,44 @@
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
+
+public class LightAttributeConverter : JsonConverter<LightAttributes>
+
+{
+    public override LightAttributes ReadJson(JsonReader reader, Type objectType, [AllowNull] LightAttributes existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        JToken jToken = JToken.ReadFrom(reader);
+
+        LightAttributes getLightAttribute()
+        {
+            try
+            {
+                if (jToken.Type is not JTokenType.None and not JTokenType.Null && jToken is JObject jObject)
+                {
+                    if (jObject.Property("colorMode") != null)
+                    {
+                        return new TemperatureLightAttributes();
+                    }
+                }
+            }
+            catch { }
+            return new LightAttributes();
+        };
+
+        LightAttributes result = getLightAttribute();
+        serializer.Populate(jToken.CreateReader(), result);
+        return result;
+    }
+
+    public override bool CanWrite => false;
+
+    public override void WriteJson(JsonWriter writer, [AllowNull] LightAttributes value, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
+}
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
@@ -35,6 +73,7 @@ public class Light : DirigeraDevice
     }
 }
 
+[JsonConverter(typeof(LightAttributeConverter))]
 public class LightAttributes : Attributes
 {
 
@@ -49,7 +88,10 @@ public class LightAttributes : Attributes
 
     [JsonProperty("startUpCurrentLevel")]
     public long StartUpCurrentLevel { get; set; }
+}
 
+public class TemperatureLightAttributes : LightAttributes
+{
     [JsonProperty("colorMode")]
     public string ColorMode { get; set; }
 

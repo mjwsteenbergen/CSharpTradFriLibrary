@@ -66,11 +66,17 @@ public class DeviceController : SubService<DirigeraController>
     }));
 
 
-    public Task<string> SetLightTemperature(Light l, int temperature) => SetLightTemperature(l.Id, temperature).ContinueWith((a) =>
+    public async Task<string> SetLightTemperature(Light l, int temperature)
+    {
+        if (l.Attributes is TemperatureLightAttributes lightAttributes)
         {
-            l.Attributes.ColorTemperature = temperature;
-            return a.Result;
-        });
+            string res = await SetLightTemperature(l.Id, temperature);
+            lightAttributes.ColorTemperature = temperature;
+            return res;
+        }
+        return "0";
+    }
+
 
     public Task<string> SetLightTemperature(string id, int temperature) => ChangeAttributes(id, new PostingAttributes<ColorTemperatureAttribute>(new ColorTemperatureAttribute
     {

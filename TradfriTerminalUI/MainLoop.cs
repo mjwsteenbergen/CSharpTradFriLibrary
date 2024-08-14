@@ -45,13 +45,21 @@ namespace TradfriTerminalUI
         {
             return DetailsView<Light>.Show(light, deviceController, (light) =>
             {
+                if (light.Attributes is TemperatureLightAttributes temperatureAttributes)
+                {
+                    return new Dictionary<string, string> {
+                        {  "Lightlevel", light.Attributes.LightLevel.ToString() },
+                        {  "IsOn", light.Attributes.IsOn.ToString() },
+                        {  "ColorTemperature", temperatureAttributes.ColorTemperature.ToString() },
+                        {  "ColorTemperatureMax", temperatureAttributes.ColorTemperatureMax.ToString() },
+                        {  "ColorTemperatureMin", temperatureAttributes.ColorTemperatureMin.ToString() },
+                    };
+                }
+
                 return new Dictionary<string, string> {
-                    {  "Lightlevel", light.Attributes.LightLevel.ToString() },
-                    {  "IsOn", light.Attributes.IsOn.ToString() },
-                    {  "ColorTemperature", light.Attributes.ColorTemperature.ToString() },
-                    {  "ColorTemperatureMax", light.Attributes.ColorTemperatureMax.ToString() },
-                    {  "ColorTemperatureMin", light.Attributes.ColorTemperatureMin.ToString() },
-                };
+                        {  "Lightlevel", light.Attributes.LightLevel.ToString() },
+                        {  "IsOn", light.Attributes.IsOn.ToString() },
+                    };
             },
             new Dictionary<string, Func<Task>> {
                 { "Set Temperature", async () => {

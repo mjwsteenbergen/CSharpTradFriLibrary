@@ -35,9 +35,11 @@ public class DeviceController : SubService<DirigeraController>
     });
     public Task<string> GetDevicesJson() => MakeRequest<string>("devices/");
 
-    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => MakeRequest(new Request<string>("devices/" + deviceId)
+    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => ChangeAttributes(deviceId, new List<PostingAttributes> { attributes });
+
+    public Task<string> ChangeAttributes(string deviceId, List<PostingAttributes> attributes) => MakeRequest(new Request<string>("devices/" + deviceId)
     {
-        Content = new object[] { attributes },
+        Content = attributes,
         Method = Call.PATCH,
         ExpectedStatusCode = System.Net.HttpStatusCode.Accepted,
         MaxRetries = 2
@@ -94,7 +96,9 @@ public class DeviceController : SubService<DirigeraController>
     }));
 }
 
-public class PostingAttributes<T> where T : DirigeraAttribute
+public interface PostingAttributes {}
+
+public class PostingAttributes<T> : PostingAttributes where T : DirigeraAttribute
 {
     public PostingAttributes(T properties, int? transitionTime = null)
     {

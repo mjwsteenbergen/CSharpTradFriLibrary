@@ -52,6 +52,8 @@ From Gateway version 1.8.25 you can't use original PSK to connect to gateway any
 ## 3. Acknowledgements
 This is an implementation based on analysis [I](https://github.com/tomidix/) found [here](https://github.com/ggravlingen/pytradfri) by [ggravlingen](https://github.com/ggravlingen/) and [here](https://bitsex.net/software/2017/coap-endpoints-on-ikea-tradfri/) by [vidarlo](https://bitsex.net/).
 
+The Dirigera implementation is based on [this Java implementation](https://github.com/dvdgeisler/DirigeraClient) and [this Node implementation](https://github.com/lpgera/dirigera)
+
 
 ## 4. Authors
 - [tomidix](https://github.com/tomidix) - Initial work, later features and maintenance

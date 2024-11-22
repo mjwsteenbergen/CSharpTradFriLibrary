@@ -120,9 +120,6 @@ public class EventController : SubService<DirigeraController>
             Source = "urn:lpgera:dirigera",
             Time = DateTimeOffset.Now,
             Type = "ping",
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Data = null,
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         });
     }
 

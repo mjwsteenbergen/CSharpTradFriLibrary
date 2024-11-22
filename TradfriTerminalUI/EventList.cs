@@ -7,6 +7,7 @@ using Spectre.Console.Json;
 using Tomidix.NetStandard.Dirigera.Controller;
 using Tomidix.NetStandard.Dirigera.Devices;
 using Tomidix.NetStandard.Dirigera.Model.Attributes;
+using Tomidix.NetStandard.Dirigera.Model.Events;
 
 namespace TradfriTerminalUI
 {
@@ -37,8 +38,17 @@ namespace TradfriTerminalUI
                             q.TryDequeue(out newEvent);
                             if (newEvent != null)
                             {
-                                var text = MapAttributeToText(newEvent.Message, devices.FirstOrDefault(i => i.Id == newEvent.Event.Data.Id)?.ToString(), newEvent.Event.Data.Attributes);
-                                AnsiConsole.MarkupLine($"[dim][[{newEvent.Event.Time}]][/] " + Markup.Escape(text));
+                                var getStateChangeText = (DirigeraStateChangedEvent events) => {
+                                    var text = MapAttributeToText(newEvent.Message, devices.FirstOrDefault(i => i.Id == events.Data.Id)?.ToString(), events.Data.Attributes);
+                                    return $"[dim][[{newEvent.Event.Time}]][/] " + Markup.Escape(text);
+                                };
+
+                                var text = newEvent.Event switch {
+                                    DirigeraStateChangedEvent events => getStateChangeText(events),
+                                    DirigeraPongEvent pongEvent => $"[dim][[{newEvent.Event.Time}]][/] Replied pong",
+                                    UnknownEvent unknownEvent => Markup.Escape(newEvent.Message)
+                                };
+                                AnsiConsole.MarkupLine(text);
                             }
                         }
                     }

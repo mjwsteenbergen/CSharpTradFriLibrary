@@ -2,12 +2,52 @@ using System.Diagnostics.CodeAnalysis;
 using ApiLibs.MicrosoftGraph;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Tomidix.NetStandard.Dirigera.Devices;
 using Tomidix.NetStandard.Dirigera.Model.Attributes;
 
 namespace Tomidix.NetStandard.Dirigera.Model.Events;
 
+public class EventConverter : JsonConverter<DirigeraEvent>
+
+{
+    public override DirigeraEvent ReadJson(JsonReader reader, Type objectType, [AllowNull] DirigeraEvent existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        JToken jObject = JToken.ReadFrom(reader);
+
+        string type = "";
+
+        try
+        {
+            if (jObject.Type is not JTokenType.None and not JTokenType.Null)
+            {
+                type = jObject["type"]?.ToObject<string>() ?? "";
+            }
+        }
+        catch { }
+
+        DirigeraEvent result = type switch
+        {
+            "deviceStateChanged" => new DirigeraStateChangedEvent(),
+            "pong" => new DirigeraPongEvent(),
+            _ => new UnknownEvent()
+        };
+
+
+        serializer.Populate(jObject.CreateReader(), result);
+        return result;
+    }
+
+    public override bool CanWrite => false;
+
+    public override void WriteJson(JsonWriter writer, [AllowNull] DirigeraEvent value, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
+[JsonConverter(typeof(EventConverter))]
 public class DirigeraEvent
 {
     [JsonProperty("id")]
@@ -24,14 +64,35 @@ public class DirigeraEvent
 
     [JsonProperty("type")]
     public string Type { get; set; }
-
-    [JsonProperty("data")]
-    public DirigeraEventDevice Data { get; set; }
 }
 
-public class DirigeraEventDevice : Device
+public class UnknownEvent : DirigeraEvent 
+{
+    [JsonProperty("data")]
+    public dynamic Data { get; set; }
+}
+
+public class DirigeraStateChangedEvent : DirigeraEvent
+{
+    [JsonProperty("data")]
+    public DirigeraStateChangedEventData Data { get; set; }
+}
+
+public class DirigeraPongEvent : DirigeraEvent
+{
+    [JsonProperty("data")]
+    public DirigeraPongEventData Data { get; set; }
+}
+
+public class DirigeraStateChangedEventData : EventDirigeraDevice
 {
     [JsonProperty("attributes")]
     public DirigeraAttribute Attributes { get; set; }
+}
+
+public class DirigeraPongEventData
+{
+    [JsonProperty("lastModified")]
+    public string LastModified { get; set; }
 }
 

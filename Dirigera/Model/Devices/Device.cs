@@ -51,6 +51,7 @@ public class DeviceConverter : JsonConverter<DirigeraDevice>
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
+
 [JsonConverter(typeof(DeviceConverter))]
 public abstract class DirigeraDevice : ObjectSearcher<DirigeraController>
 {
@@ -73,6 +74,27 @@ public abstract class DirigeraDevice : ObjectSearcher<DirigeraController>
     public string LastSeen { get; set; }
 
     public abstract string GetName();
+}
+
+public class EventDirigeraDevice
+{
+    [JsonProperty("id")]
+    public string Id { get; set; }
+
+    [JsonProperty("type")]
+    public string Type { get; set; }
+
+    [JsonProperty("deviceType")]
+    public string DeviceType { get; set; }
+
+    [JsonProperty("createdAt")]
+    public string CreatedAt { get; set; }
+
+    [JsonProperty("isReachable")]
+    public bool IsReachable { get; set; }
+
+    [JsonProperty("lastSeen")]
+    public string LastSeen { get; set; }
 }
 
 public partial class Attributes

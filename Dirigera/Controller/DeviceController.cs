@@ -53,6 +53,12 @@ public class DeviceController : SubService<DirigeraController>
         return a.Result;
     });
 
+    public Task<string> Toggle(Outlet l) => Toggle(l.Id, !l.Attributes.IsOn).ContinueWith((a) =>
+    {
+        l.Attributes.IsOn = !l.Attributes.IsOn;
+        return a.Result;
+    });
+
     public Task<string> Toggle(string id, bool isOn) => ChangeAttributes(id, new PostingAttributes<ToggleAttribute>(new ToggleAttribute
     {
         IsOn = isOn

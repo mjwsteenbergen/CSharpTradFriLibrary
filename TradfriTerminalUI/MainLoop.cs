@@ -17,6 +17,7 @@ namespace TradfriTerminalUI
                 EnvironmentSensor environmentSensor => EnvironmentDetailView(environmentSensor, deviceController),
                 Light light => LightDetailView(light, deviceController),
                 MotionSensor motionSensor => MotionSensorDetailView(motionSensor, deviceController),
+                Outlet outlet => OutletView(outlet, deviceController),
                 _ => DetailViewFallback(d)
             };
         }
@@ -39,6 +40,19 @@ namespace TradfriTerminalUI
                 };
             },
             new Dictionary<string, Func<Task>> { });
+        }
+
+        public static Task OutletView(Outlet outlet, DeviceController deviceController)
+        {
+            return DetailsView<Outlet>.Show(outlet, deviceController, (sensor) =>
+            {
+                return new Dictionary<string, string> {
+                    {  "State", sensor.Attributes.IsOn.ToString() },
+                };
+            },
+            new Dictionary<string, Func<Task>> { 
+                { "Toggle", outlet.Toggle}
+            });
         }
 
         public static Task LightDetailView(Light light, DeviceController deviceController)

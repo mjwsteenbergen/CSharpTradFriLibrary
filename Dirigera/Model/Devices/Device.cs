@@ -32,6 +32,7 @@ public class DeviceConverter : JsonConverter<DirigeraDevice>
             "light" => new Light(),
             "motionSensor" => new MotionSensor(),
             "lightSensor" => new LightSensor(),
+            "outlet" => new Outlet(),
             _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + "\n" + jObject.ToString())
         };
 

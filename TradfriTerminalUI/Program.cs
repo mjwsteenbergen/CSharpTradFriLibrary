@@ -78,6 +78,7 @@ namespace TradfriTerminalUI
                 Light light => light.ToString(),
                 LightSensor lightSensor => lightSensor.ToString(),
                 MotionSensor motionSensor => motionSensor.ToString(),
+                Outlet outlet => outlet.ToString(),
                 DirigeraDevice d => "Unknown device:" + d.Type + "|" + d.ToString(),
                 _ => "Unknown value"
             };

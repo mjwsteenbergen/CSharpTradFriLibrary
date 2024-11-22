@@ -23,6 +23,8 @@ namespace TradfriTerminalUI
                 q.Enqueue(ev);
             };
 
+            controller.SendKeepAliveMessages(CancellationToken.None);
+
             await AnsiConsole.Status()
                 .StartAsync("Waiting for messages", async ctx =>
                 {
@@ -35,7 +37,6 @@ namespace TradfriTerminalUI
                             q.TryDequeue(out newEvent);
                             if (newEvent != null)
                             {
-
                                 var text = MapAttributeToText(newEvent.Message, devices.FirstOrDefault(i => i.Id == newEvent.Event.Data.Id)?.ToString(), newEvent.Event.Data.Attributes);
                                 AnsiConsole.MarkupLine($"[dim][[{newEvent.Event.Time}]][/] " + Markup.Escape(text));
                             }

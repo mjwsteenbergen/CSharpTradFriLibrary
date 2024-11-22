@@ -1,10 +1,6 @@
-using System.Buffers.Text;
 using System.Net.WebSockets;
-using System.Security.Cryptography;
 using System.Text;
-using ApiLibs;
 using ApiLibs.General;
-using ApiLibs.GitHub;
 using Newtonsoft.Json;
 using Tomidix.NetStandard.Dirigera.Model.Events;
 
@@ -32,6 +28,8 @@ public class EventController : SubService<DirigeraController>
 
     public event EventHandler<DirigeraEventArgs>? OnEventSent;
 
+    private ClientWebSocket ws;
+
 
     // Wrap event invocations inside a protected virtual method
     // to allow derived classes to override the event invocation behavior
@@ -55,12 +53,11 @@ public class EventController : SubService<DirigeraController>
 
     public async Task Connect(CancellationToken cancellationToken)
     {
-        ClientWebSocket ws = new();
+        this.ws = new();
         ws.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
         ws.Options.SetRequestHeader("Authorization", "Bearer " + Service.token);
 
         await ws.ConnectAsync(new Uri($"wss://{Service.hostUrl}:8443/v1"), cancellationToken);
-
         new Task(async () =>
         {
 
@@ -86,6 +83,59 @@ public class EventController : SubService<DirigeraController>
         }, cancellationToken).Start();
 
 
+    }
+
+    public void SendKeepAliveMessages(CancellationToken cancellationToken) {
+        var timer = new System.Timers.Timer(30000);
+        // Hook up the Elapsed event for the timer. 
+        timer.Elapsed += async (obj, e) => {
+            if(cancellationToken.IsCancellationRequested)    {
+                timer.Stop();
+                timer.Dispose();
+                return;
+            }
+
+            try {
+                await SendPingMessage();            
+            } catch(Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+        };
+        timer.AutoReset = true;
+        timer.Enabled = true;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <see cref="https://github.com/lpgera/dirigera/blob/main/src/ws.ts#L39"/>
+    /// <returns></returns>
+    private async Task SendPingMessage()
+    {
+        await SendMessage(new DirigeraEvent
+        {
+            Id = Guid.NewGuid().ToString(),
+            Specversion = "1.1.0",
+            Source = "urn:lpgera:dirigera",
+            Time = DateTimeOffset.Now,
+            Type = "ping",
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Data = null,
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+        });
+    }
+
+    private Task SendMessage(DirigeraEvent data, CancellationToken? cancellationToken = null)
+    {
+        return SendMessage(JsonConvert.SerializeObject(data), cancellationToken);
+    }
+
+    private Task SendMessage(string data, CancellationToken? cancellationToken = null)
+    {
+        var encoded = Encoding.UTF8.GetBytes(data);
+        var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
+        return ws.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken ?? CancellationToken.None);
     }
 
 }

@@ -86,7 +86,7 @@ public class DirigeraController : RestSharpService
 
     public static string Base64SafeEncode(byte[] encbuff)
     {
-        return System.Convert.ToBase64String(encbuff).Replace("=", ",").Replace("+", "-").Replace("/", "_");
+        return Convert.ToBase64String(encbuff).Replace("=", ",").Replace("+", "-").Replace("/", "_");
     }
 }
 

@@ -14,18 +14,22 @@ public class DirigeraAttributeConverter : JsonConverter<DirigeraAttribute>
 
         if (jToken is JObject jObject)
         {
-            DirigeraAttribute result = jObject.Properties().First().Name switch
+            string propertyName = jObject.Properties().First().Name;
+            DirigeraAttribute result = propertyName switch
             {
                 "isOn" => new ToggleAttribute(),
                 "lightLevel" => new LightLevelAttribute(),
                 "colorTemperature" => new ColorTemperatureAttribute(),
+                "colorMode" => new ColorTemperatureAttribute(),
                 "currentRH" => new RelativeHumidityAttribute(),
                 "vocIndex" => new VOCAttribute(),
                 "currentPM25" => new Pm25Attribute(),
                 "illuminance" => new IlluminanceAttribute(),
                 "isDetected" => new MotionAttribute(),
+                "otaState" => new OTAStateAttribute(),
                 _ => new UnknownAttribute
                 {
+                    MissingPropertyName = propertyName,
                     Json = jToken.ToString(Formatting.Indented)
                 }
             };
@@ -62,6 +66,23 @@ public class ToggleAttribute : DirigeraAttribute
     public bool IsOn { get; set; }
 }
 
+
+public class OTAStateAttribute : DirigeraAttribute
+{
+    [JsonProperty("otaState")]
+    public string OtaState { get; set; }
+
+    [JsonProperty("sensorConfig")]
+    public SensorConfig SensorConfig { get; set; }
+
+    [JsonProperty("circadianPresets")]
+    public object[] CircadianPresets { get; set; }
+}
+
+public class SensorConfig {
+    [JsonProperty("scheduleOn")]
+    public string OtaState { get; set; }
+}
 
 public class LightLevelAttribute : DirigeraAttribute
 {
@@ -119,6 +140,7 @@ public class MotionDetectedDelayAttribute : DirigeraAttribute
 
 public class UnknownAttribute : DirigeraAttribute
 {
+    public string MissingPropertyName { get; set; }
     public string Json { get; set; }
 }
 

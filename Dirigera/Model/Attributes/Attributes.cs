@@ -21,6 +21,7 @@ public class DirigeraAttributeConverter : JsonConverter<DirigeraAttribute>
                 "lightLevel" => new LightLevelAttribute(),
                 "colorTemperature" => new ColorTemperatureAttribute(),
                 "colorMode" => new ColorTemperatureAttribute(),
+                "currentTemperature" => new TemperatureAttribute(),
                 "currentRH" => new RelativeHumidityAttribute(),
                 "vocIndex" => new VOCAttribute(),
                 "currentPM25" => new Pm25Attribute(),
@@ -112,6 +113,12 @@ public class Pm25Attribute : DirigeraAttribute
 {
     [JsonProperty("currentPM25")]
     public int CurrentPM25 { get; set; }
+}
+
+public class TemperatureAttribute : DirigeraAttribute
+{
+    [JsonProperty("currentTemperature")]
+    public int CurrentTemperature { get; set; }
 }
 
 public class IlluminanceAttribute : DirigeraAttribute

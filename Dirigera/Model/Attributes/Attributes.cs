@@ -28,6 +28,16 @@ public class DirigeraAttributeConverter : JsonConverter<DirigeraAttribute>
                 "illuminance" => new IlluminanceAttribute(),
                 "isDetected" => new MotionAttribute(),
                 "otaState" => new OTAStateAttribute(),
+                "waterLeakDetected" => new WaterLeakDetectedAttribute(),
+                "currentAmps" => new CurrentPowerUsageAttribute(),
+                "currentVoltage" => new CurrentPowerUsageAttribute(),
+                "currentActivePower" => new CurrentPowerUsageAttribute(),
+                "totalEnergyConsumed" => new TotalEnergyConsumedAttribute(),
+                "totalEnergyConsumedLastUpdated" => new TotalEnergyConsumedAttribute(),
+                "otaStatus" => new OtaStatusAttribute(),
+                "otaProgress" => new OtaProgressAttribute(),
+                "identifyPeriod" => new IdentifyAttribute(),
+                "batteryPercentage" => new BatteryAttribute(),
                 _ => new UnknownAttribute
                 {
                     MissingPropertyName = propertyName,
@@ -144,6 +154,64 @@ public class MotionDetectedDelayAttribute : DirigeraAttribute
     [JsonProperty("motionDetectedDelay")]
     public int MotionDetectedDelay { get; set; }
 }
+
+
+public class TotalEnergyConsumedAttribute : DirigeraAttribute
+{
+    [JsonProperty("totalEnergyConsumed")]
+    public double TotalEnergyConsumed { get; set; }
+
+    [JsonProperty("totalEnergyConsumedLastUpdated")]
+    public DateTime TotalEnergyConsumedLastUpdated { get; set; }
+}
+
+public class CurrentPowerUsageAttribute : DirigeraAttribute
+{
+    [JsonProperty("currentAmps")]
+    public double? CurrentAmps { get; set; }
+
+    [JsonProperty("currentVoltage")]
+    public double? CurrentVoltage { get; set; }
+
+    [JsonProperty("currentActivePower")]
+    public double? CurrentActivePower { get; set; }
+}
+
+public class WaterLeakDetectedAttribute : DirigeraAttribute
+{
+    [JsonProperty("waterLeakDetected")]
+    public bool WaterLeakDetected { get; set; }
+}
+
+public class OtaStatusAttribute : DirigeraAttribute
+{
+    [JsonProperty("otaStatus")]
+    public string OtaStatus { get; set; }
+}
+
+public class OtaProgressAttribute : DirigeraAttribute
+{
+    [JsonProperty("otaProgress")]
+    public int OtaProgress { get; set; }
+}
+
+public class IdentifyAttribute : DirigeraAttribute
+{
+    [JsonProperty("identifyPeriod")]
+    public int IdentifyPeriod { get; set; }
+
+    [JsonProperty("identifyStarted")]
+    public DateTime IdentifyStarted { get; set; }
+}
+
+public class BatteryAttribute : DirigeraAttribute
+{
+    [JsonProperty("batteryPercentage")]
+    public int BatteryPercentage { get; set; }
+}
+
+
+
 
 public class UnknownAttribute : DirigeraAttribute
 {

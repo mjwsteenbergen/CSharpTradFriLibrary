@@ -125,10 +125,25 @@ public class Pm25Attribute : DirigeraAttribute
     public int CurrentPM25 { get; set; }
 }
 
+public class CO2Attribute : DirigeraAttribute
+{
+    [JsonProperty("currentCO2")]
+    public int CurrentCO2 { get; set; }
+}
+
 public class TemperatureAttribute : DirigeraAttribute
 {
     [JsonProperty("currentTemperature")]
     public int CurrentTemperature { get; set; }
+
+    [JsonProperty("currentPM25")]
+    public int? CurrentPM25 { get; set; }
+
+    [JsonProperty("currentRH")]
+    public int? CurrentRelativeHumidity { get; set; }
+
+    [JsonProperty("currentCO2")]
+    public int? CurrentCO2 { get; set; }
 }
 
 public class IlluminanceAttribute : DirigeraAttribute

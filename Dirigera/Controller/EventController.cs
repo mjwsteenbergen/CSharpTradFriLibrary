@@ -64,21 +64,29 @@ public class EventController : SubService<DirigeraController>
             while (true)
             {
                 ArraySegment<byte> buffer = new ArraySegment<byte>(new byte[8192]);
-                var result = await ws.ReceiveAsync(buffer, cancellationToken);
-                if (result.MessageType == WebSocketMessageType.Close)
+                try
+                {
+                    var result = await ws.ReceiveAsync(buffer, cancellationToken);
+                    if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        break;
+                    }
+
+                    var message = Encoding.UTF8.GetString(buffer.Array ?? [], 0, result.Count);
+
+                    // The message is the json file with ` at TIMESTAMP` text appended for some weird reason
+                    var split = message.Split(" at ");
+                    OnRaiseDirigeraEvent(new DirigeraEventArgs
+                    {
+                        Message = message,
+                        Event = JsonConvert.DeserializeObject<DirigeraEvent>(split[0])
+                    });
+                } 
+                catch (TaskCanceledException)
                 {
                     break;
                 }
-
-                var message = Encoding.UTF8.GetString(buffer.Array ?? [], 0, result.Count);
-
-                // The message is the json file with ` at TIMESTAMP` text appended for some weird reason
-                var split = message.Split(" at ");
-                OnRaiseDirigeraEvent(new DirigeraEventArgs
-                {
-                    Message = message,
-                    Event = JsonConvert.DeserializeObject<DirigeraEvent>(split[0])
-                });
+                
             }
         }, cancellationToken).Start();
 

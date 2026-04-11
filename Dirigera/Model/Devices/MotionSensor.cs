@@ -7,7 +7,7 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 public class MotionSensor : DirigeraDevice
 {
     [JsonProperty("attributes")]
-    public MotionDeviceAttributes Attributes { get; set; }
+    public MotionSensorAttributes Attributes { get; set; }
 
     [JsonProperty("room")]
     public Room Room { get; set; }
@@ -16,7 +16,7 @@ public class MotionSensor : DirigeraDevice
     {
         return Service.DeviceController.SetMotionDetectedDelay(this, delay);
     }
-    
+
     public override string GetName() => Attributes.CustomName;
 
     public override string ToString()
@@ -26,7 +26,7 @@ public class MotionSensor : DirigeraDevice
     }
 }
 
-public class MotionDeviceAttributes : Attributes
+public class MotionSensorAttributes : Attributes
 {
     [JsonProperty("batteryPercentage")]
     public long BatteryPercentage { get; set; }
@@ -72,4 +72,25 @@ public partial class Condition
 {
     [JsonProperty("time")]
     public string Time { get; set; }
+}
+
+public class MotionSensorEventAttributes : EventAttributes
+{
+    [JsonProperty("batteryPercentage")]
+    public long? BatteryPercentage { get; set; }
+
+    [JsonProperty("isOn")]
+    public bool? IsOn { get; set; }
+
+    [JsonProperty("isDetected")]
+    public bool? IsDetected { get; set; }
+
+    [JsonProperty("motionDetectedDelay")]
+    public long? MotionDetectedDelay { get; set; }
+
+    [JsonProperty("sensorConfig")]
+    public SensorConfig? SensorConfig { get; set; }
+
+    [JsonProperty("circadianPresets")]
+    public object[]? CircadianPresets { get; set; }
 }

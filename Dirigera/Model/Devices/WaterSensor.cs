@@ -31,3 +31,12 @@ public class WaterSensorAttributes : Attributes
     [JsonProperty("batteryPercentage")]
     public int BatteryPercentage { get; set; }
 }
+
+public class WaterSensorEventAttributes : EventAttributes
+{
+    [JsonProperty("waterLeakDetected")]
+    public bool? WaterLeakDetected { get; set; }
+
+    [JsonProperty("batteryPercentage")]
+    public int? BatteryPercentage { get; set; }
+}

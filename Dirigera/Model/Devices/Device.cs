@@ -148,3 +148,54 @@ public partial class Attributes
     [JsonProperty("otaStatus")]
     public string OtaStatus { get; set; }
 }
+
+public partial class EventAttributes
+{
+    [JsonProperty("customName")]
+    public string? CustomName { get; set; }
+
+    [JsonProperty("model")]
+    public string? Model { get; set; }
+
+    [JsonProperty("manufacturer")]
+    public string? Manufacturer { get; set; }
+
+    [JsonProperty("firmwareVersion")]
+    public string? FirmwareVersion { get; set; }
+
+    [JsonProperty("hardwareVersion")]
+    public string? HardwareVersion { get; set; }
+
+    [JsonProperty("serialNumber")]
+    public string? SerialNumber { get; set; }
+
+    [JsonProperty("productCode")]
+    public string? ProductCode { get; set; }
+
+    [JsonProperty("identifyPeriod")]
+    public long? IdentifyPeriod { get; set; }
+
+    [JsonProperty("identifyStarted")]
+    public DateTimeOffset? IdentifyStarted { get; set; }
+
+    [JsonProperty("permittingJoin")]
+    public bool? PermittingJoin { get; set; }
+
+    [JsonProperty("otaPolicy")]
+    public string? OtaPolicy { get; set; }
+
+    [JsonProperty("otaProgress")]
+    public long? OtaProgress { get; set; }
+
+    [JsonProperty("otaScheduleEnd")]
+    public string? OtaScheduleEnd { get; set; }
+
+    [JsonProperty("otaScheduleStart")]
+    public string? OtaScheduleStart { get; set; }
+
+    [JsonProperty("otaState")]
+    public string? OtaState { get; set; }
+
+    [JsonProperty("otaStatus")]
+    public string? OtaStatus { get; set; }
+}

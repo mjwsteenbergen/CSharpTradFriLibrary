@@ -1,9 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using ApiLibs.MicrosoftGraph;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Tomidix.NetStandard.Dirigera.Devices;
-using Tomidix.NetStandard.Dirigera.Model.Attributes;
 
 namespace Tomidix.NetStandard.Dirigera.Model.Events;
 
@@ -66,7 +64,7 @@ public class DirigeraEvent
     public string Type { get; set; }
 }
 
-public class UnknownEvent : DirigeraEvent 
+public class UnknownEvent : DirigeraEvent
 {
     [JsonProperty("data")]
     public dynamic Data { get; set; }
@@ -84,15 +82,16 @@ public class DirigeraPongEvent : DirigeraEvent
     public DirigeraPongEventData Data { get; set; }
 }
 
-public class DirigeraStateChangedEventData : EventDirigeraDevice
-{
-    [JsonProperty("attributes")]
-    public DirigeraAttribute Attributes { get; set; }
-}
 
 public class DirigeraPongEventData
 {
     [JsonProperty("lastModified")]
     public string LastModified { get; set; }
+}
+
+public class DirigeraStateChangedEventData : EventDirigeraDevice
+{
+    [JsonProperty("attributes")]
+    public EventAttributes Attributes { get; set; }
 }
 

@@ -26,3 +26,9 @@ public class LightSensorAttributes : Attributes
     [JsonProperty("illuminance")]
     public long Illuminance { get; set; }
 }
+
+public class LightSensorEventAttributes : EventAttributes
+{
+    [JsonProperty("illuminance")]
+    public long? Illuminance { get; set; }
+}

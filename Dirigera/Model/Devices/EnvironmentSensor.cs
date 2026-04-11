@@ -1,7 +1,4 @@
-using System.Reflection;
-using ApiLibs.General;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -57,4 +54,25 @@ public class EnvironmentSensorAttributes : Attributes
 
     [JsonProperty("vocIndex")]
     public int VocIndex { get; set; }
+}
+
+public class EnvironmentSensorEventAttributes : Attributes
+{
+    [JsonProperty("currentTemperature")]
+    public int? CurrentTemperature { get; set; }
+
+    [JsonProperty("currentRH")]
+    public int? CurrentRH { get; set; }
+
+    [JsonProperty("currentPM25")]
+    public int? CurrentPM25 { get; set; }
+
+    [JsonProperty("maxMeasuredPM25")]
+    public int? MaxMeasuredPM25 { get; set; }
+
+    [JsonProperty("minMeasuredPM25")]
+    public int? MinMeasuredPM25 { get; set; }
+
+    [JsonProperty("vocIndex")]
+    public int? VocIndex { get; set; }
 }

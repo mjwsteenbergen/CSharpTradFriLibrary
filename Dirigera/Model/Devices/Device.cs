@@ -149,7 +149,8 @@ public partial class Attributes
     public string OtaStatus { get; set; }
 }
 
-public partial class EventAttributes
+[JsonConverter(typeof(DirigeraEventAttributesDataConverter))]
+public abstract class EventAttributes
 {
     [JsonProperty("customName")]
     public string? CustomName { get; set; }

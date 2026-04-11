@@ -1,17 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using ApiLibs.General;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Tomidix.NetStandard.Dirigera.Controller;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
-
-[JsonConverter(typeof(DirigeraEventAttributesDataConverter))]
-public partial class EventAttributes
-{
-
-}
 
 public class DirigeraEventAttributesDataConverter : JsonConverter<EventAttributes>
 
@@ -35,7 +26,7 @@ public class DirigeraEventAttributesDataConverter : JsonConverter<EventAttribute
         {
             "environmentSensor" => new EnvironmentSensorEventAttributes(),
             // "gateway" => new Gateway(),
-            "light" => new LightSensorEventAttributes(),
+            "light" => new LightEventAttributes(),
             "motionSensor" => new MotionSensorEventAttributes(),
             "lightSensor" => new LightSensorEventAttributes(),
             "outlet" => new OutletEventAttributes(),

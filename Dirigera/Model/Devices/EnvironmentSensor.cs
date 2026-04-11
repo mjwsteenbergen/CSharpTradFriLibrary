@@ -54,9 +54,12 @@ public class EnvironmentSensorAttributes : Attributes
 
     [JsonProperty("vocIndex")]
     public int VocIndex { get; set; }
+
+    [JsonProperty("currentCO2")]
+    public int? CurrentCO2 { get; set; }
 }
 
-public class EnvironmentSensorEventAttributes : Attributes
+public class EnvironmentSensorEventAttributes : EventAttributes
 {
     [JsonProperty("currentTemperature")]
     public int? CurrentTemperature { get; set; }
@@ -75,4 +78,7 @@ public class EnvironmentSensorEventAttributes : Attributes
 
     [JsonProperty("vocIndex")]
     public int? VocIndex { get; set; }
+
+    [JsonProperty("currentCO2")]
+    public int? CurrentCO2 { get; set; }
 }

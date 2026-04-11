@@ -45,6 +45,9 @@ public class MotionSensorAttributes : Attributes
 
     [JsonProperty("circadianPresets")]
     public object[] CircadianPresets { get; set; }
+
+    [JsonProperty("lightLevel")]
+    public int? LightLevel { get; set; }
 }
 
 public partial class SensorConfig
@@ -93,4 +96,7 @@ public class MotionSensorEventAttributes : EventAttributes
 
     [JsonProperty("circadianPresets")]
     public object[]? CircadianPresets { get; set; }
+
+    [JsonProperty("lightLevel")]
+    public int? LightLevel { get; set; }
 }

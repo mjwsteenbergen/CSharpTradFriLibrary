@@ -33,7 +33,7 @@ public class DirigeraEventAttributesDataConverter : JsonConverter<EventAttribute
 
         EventAttributes result = deviceType switch
         {
-            // "environmentSensor" => new EnvironmentSensor(),
+            "environmentSensor" => new EnvironmentSensorEventAttributes(),
             // "gateway" => new Gateway(),
             "light" => new LightSensorEventAttributes(),
             "motionSensor" => new MotionSensorEventAttributes(),

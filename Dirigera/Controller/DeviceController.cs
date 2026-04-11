@@ -2,7 +2,6 @@ using ApiLibs.General;
 using Tomidix.NetStandard.Dirigera.Devices;
 using Newtonsoft.Json;
 using ApiLibs;
-using Tomidix.NetStandard.Dirigera.Model.Attributes;
 using Martijn.Extensions.Linq;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
@@ -37,7 +36,7 @@ public class DeviceController : SubService<DirigeraController>
     });
     public Task<string> GetDevicesJson() => MakeRequest<string>("devices/");
 
-    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : DirigeraAttribute => ChangeAttributes(deviceId, new List<PostingAttributes> { attributes });
+    public Task<string> ChangeAttributes<T>(string deviceId, PostingAttributes<T> attributes) where T : EventAttributes => ChangeAttributes(deviceId, new List<PostingAttributes> { attributes });
 
     public Task<string> ChangeAttributes(string deviceId, List<PostingAttributes> attributes) => MakeRequest(new Request<string>("devices/" + deviceId)
     {
@@ -59,7 +58,7 @@ public class DeviceController : SubService<DirigeraController>
         return a.Result;
     });
 
-    public Task<string> Toggle(string id, bool isOn) => ChangeAttributes(id, new PostingAttributes<ToggleAttribute>(new ToggleAttribute
+    public Task<string> Toggle(string id, bool isOn) => ChangeAttributes(id, new PostingAttributes<LightEventAttributes>(new LightEventAttributes
     {
         IsOn = isOn
     }));
@@ -70,7 +69,7 @@ public class DeviceController : SubService<DirigeraController>
             return a.Result;
         });
 
-    public Task<string> SetLightLevel(string id, int level) => ChangeAttributes(id, new PostingAttributes<LightLevelAttribute>(new LightLevelAttribute
+    public Task<string> SetLightLevel(string id, int level) => ChangeAttributes(id, new PostingAttributes<LightEventAttributes>(new LightEventAttributes
     {
         LightLevel = level
     }));
@@ -88,7 +87,7 @@ public class DeviceController : SubService<DirigeraController>
     }
 
 
-    public Task<string> SetLightTemperature(string id, int temperature) => ChangeAttributes(id, new PostingAttributes<ColorTemperatureAttribute>(new ColorTemperatureAttribute
+    public Task<string> SetLightTemperature(string id, int temperature) => ChangeAttributes(id, new PostingAttributes<LightEventAttributes>(new LightEventAttributes
     {
         ColorTemperature = temperature
     }));
@@ -98,7 +97,7 @@ public class DeviceController : SubService<DirigeraController>
         motionSensor.Attributes.MotionDetectedDelay = delay;
     });
 
-    public Task SetMotionDetectedDelay(string id, int delay) => ChangeAttributes(id, new PostingAttributes<MotionDetectedDelayAttribute>(new MotionDetectedDelayAttribute
+    public Task SetMotionDetectedDelay(string id, int delay) => ChangeAttributes(id, new PostingAttributes<MotionSensorEventAttributes>(new MotionSensorEventAttributes
     {
         MotionDetectedDelay = delay
     }));
@@ -106,7 +105,7 @@ public class DeviceController : SubService<DirigeraController>
 
 public interface PostingAttributes {}
 
-public class PostingAttributes<T> : PostingAttributes where T : DirigeraAttribute
+public class PostingAttributes<T> : PostingAttributes where T : EventAttributes
 {
     public PostingAttributes(T properties, int? transitionTime = null)
     {

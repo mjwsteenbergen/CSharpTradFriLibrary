@@ -107,3 +107,33 @@ public class TemperatureLightAttributes : LightAttributes
     [JsonProperty("colorTemperatureMin")]
     public long ColorTemperatureMin { get; set; }
 }
+
+public class LightEventAttributes : EventAttributes
+{
+    [JsonProperty("isOn")]
+    public bool? IsOn { get; set; }
+
+    [JsonProperty("startupOnOff")]
+    public string? StartupOnOff { get; set; }
+
+    [JsonProperty("lightLevel")]
+    public long? LightLevel { get; set; }
+
+    [JsonProperty("startUpCurrentLevel")]
+    public long? StartUpCurrentLevel { get; set; }
+
+    [JsonProperty("colorMode")]
+    public string? ColorMode { get; set; }
+
+    [JsonProperty("startupTemperature")]
+    public long? StartupTemperature { get; set; }
+
+    [JsonProperty("colorTemperature")]
+    public long? ColorTemperature { get; set; }
+
+    [JsonProperty("colorTemperatureMax")]
+    public long? ColorTemperatureMax { get; set; }
+
+    [JsonProperty("colorTemperatureMin")]
+    public long? ColorTemperatureMin { get; set; }
+}

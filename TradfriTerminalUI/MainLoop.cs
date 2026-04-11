@@ -33,7 +33,7 @@ namespace TradfriTerminalUI
             return DetailsView<EnvironmentSensor>.Show(sensor, deviceController, (sensor) =>
             {
                 return new Dictionary<string, string> {
-                    {  "Temperature", sensor.Attributes.CurrentTemperature.ToString() },
+                {  "Temperature", sensor.Attributes.CurrentTemperature.ToString() },
                 {  "PM25", sensor.Attributes.CurrentPM25.ToString() },
                 {  "VOCIndex", sensor.Attributes.VocIndex.ToString() },
                 {  "Humidity", sensor.Attributes.CurrentRH.ToString() },
@@ -50,7 +50,7 @@ namespace TradfriTerminalUI
                     {  "State", sensor.Attributes.IsOn.ToString() },
                 };
             },
-            new Dictionary<string, Func<Task>> { 
+            new Dictionary<string, Func<Task>> {
                 { "Toggle", outlet.Toggle}
             });
         }

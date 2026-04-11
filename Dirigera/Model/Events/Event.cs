@@ -89,9 +89,59 @@ public class DirigeraPongEventData
     public string LastModified { get; set; }
 }
 
+[JsonConverter(typeof(DirigeraStateChangedEventDataConverter))]
 public class DirigeraStateChangedEventData : EventDirigeraDevice
 {
     [JsonProperty("attributes")]
     public EventAttributes Attributes { get; set; }
+}
+
+public class DirigeraStateChangedEventDataConverter : JsonConverter<DirigeraStateChangedEventData>
+
+{
+    public override DirigeraStateChangedEventData ReadJson(JsonReader reader, Type objectType, [AllowNull] DirigeraStateChangedEventData existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        JObject jObject = JObject.Load(reader);
+
+        string deviceType = jObject["deviceType"]?.ToObject<string>() ?? "";
+
+        EventAttributes attributes = deviceType switch
+        {
+            "environmentSensor" => new EnvironmentSensorEventAttributes(),
+            "light" => new LightEventAttributes(),
+            "motionSensor" => new MotionSensorEventAttributes(),
+            "lightSensor" => new LightSensorEventAttributes(),
+            "outlet" => new OutletEventAttributes(),
+            "waterSensor" => new WaterSensorEventAttributes(),
+            _ => new UnknownEventAttributes
+            {
+                DeviceType = deviceType,
+                Json = jObject["attributes"]?.ToString(Formatting.Indented)
+            }
+        };
+
+        JToken attributesToken = jObject["attributes"];
+        if (attributesToken != null)
+            serializer.Populate(attributesToken.CreateReader(), attributes);
+
+        // Populate all other properties on DirigeraEvent automatically
+        var result = new DirigeraStateChangedEventData { Attributes = attributes };
+        serializer.Populate(jObject.CreateReader(), result);
+
+        return result;
+    }
+
+    public override bool CanWrite => false;
+
+    public override void WriteJson(JsonWriter writer, [AllowNull] DirigeraStateChangedEventData value, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class UnknownEventAttributes : EventAttributes
+{
+    public required string DeviceType { get; set; }
+    public required string Json { get; set; }
 }
 

@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using ApiLibs.MicrosoftGraph;
+using Martijn.Extensions.Linq;
+
 
 // using Martijn.Extensions.Linq;
 using Spectre.Console;
@@ -39,44 +41,138 @@ namespace TradfriTerminalUI
                             {
                                 var getStateChangeText = (DirigeraStateChangedEvent events) =>
                                 {
-                                    var text = MapAttributeToText(newEvent.Message, devices.FirstOrDefault(i => i.Id == events.Data.Id)?.ToString(), events.Data.Attributes);
-                                    return $"[dim][[{newEvent.Event.Time}]][/] " + Markup.Escape(text);
+                                    return MapAttributeToText(newEvent.Message, devices.FirstOrDefault(i => i.Id == events.Data.Id)?.ToString(), events.Data.Attributes)
+                                        .Select(text => $"[dim][[{newEvent.Event.Time}]][/] " + Markup.Escape(text));
                                 };
 
-                                var text = newEvent.Event switch
+                                var lines = newEvent.Event switch
                                 {
                                     DirigeraStateChangedEvent events => getStateChangeText(events),
-                                    DirigeraPongEvent pongEvent => $"[dim][[{newEvent.Event.Time}]][/] Replied pong",
-                                    UnknownEvent unknownEvent => Markup.Escape(newEvent.Message)
+                                    DirigeraPongEvent pongEvent => new List<string> { $"[dim][[{newEvent.Event.Time}]][/] Replied pong" },
+                                    UnknownEvent unknownEvent => new List<string> { Markup.Escape(newEvent.Message) },
+                                    _ => new List<string>()
                                 };
-                                AnsiConsole.MarkupLine(text);
+
+                                lines.Foreach(AnsiConsole.MarkupLine);
                             }
                         }
                     }
                 });
         }
 
-        public static string MapAttributeToText(string text, string? deviceName, EventAttributes attribute)
+        public static List<string> MapAttributeToText(string text, string? deviceName, EventAttributes changedEvent)
         {
-            return attribute switch
+            List<string> lines = [];
+            if (changedEvent is EnvironmentSensorEventAttributes environmentSensorEvent)
             {
-                // ToggleAttribute toggleAttribute => toggleAttribute.IsOn ? $"{deviceName} was turned on" : $"{deviceName} was turned off",
-                // LightLevelAttribute toggleAttribute => $"The lightlevel of {deviceName} was changed to {toggleAttribute.LightLevel}",
-                // RelativeHumidityAttribute relativeHumidity => $"{deviceName} measured a relative humidity of {relativeHumidity.CurrentRelativeHumidity}",
-                // VOCAttribute vOCAttribute => $"{deviceName} measured a volatile organic compounds of {vOCAttribute.VocIndex}",
-                // Pm25Attribute pm25Attribute => $"{deviceName} measured a PM25 of {pm25Attribute.CurrentPM25}",
-                // IlluminanceAttribute illuminance => $"{deviceName} measured luminance of {illuminance.Illuminance}",
-                // CurrentPowerUsageAttribute currentPowerUsageAttribute when currentPowerUsageAttribute.CurrentAmps != null => $"{deviceName} measured ampere of {currentPowerUsageAttribute.CurrentAmps}",
-                // CurrentPowerUsageAttribute currentPowerUsageAttribute when currentPowerUsageAttribute.CurrentVoltage != null => $"{deviceName} measured voltage of {currentPowerUsageAttribute.CurrentVoltage}",
-                // CurrentPowerUsageAttribute currentPowerUsageAttribute when currentPowerUsageAttribute.CurrentActivePower != null => $"{deviceName} measured power of {currentPowerUsageAttribute.CurrentActivePower}",
-                // MotionAttribute => $"{deviceName} detected motion",
-                // WaterLeakDetectedAttribute => $"{deviceName} detected something with water",
-                // BatteryAttribute battery => $"{deviceName} has a batterypercentage of {battery.BatteryPercentage}%",
-                // TemperatureAttribute temperatureAttribute => $"{deviceName} measured a temperature of {temperatureAttribute.CurrentTemperature}",
-                // TotalEnergyConsumedAttribute totalEnergy => $"{deviceName} consumed a new total of {totalEnergy.TotalEnergyConsumed} of Power",
-                UnknownEventAttributes unknownAttribute => unknownAttribute.Json,
-                _ => text
-            };
+                if (environmentSensorEvent.VocIndex != null)
+                {
+                    lines.Add($"{deviceName} measured a volatile organic compounds of {environmentSensorEvent.VocIndex}");
+                }
+
+                if (environmentSensorEvent.CurrentTemperature != null)
+                {
+                    lines.Add($"{deviceName} measured a temperature of {environmentSensorEvent.CurrentTemperature}");
+                }
+
+                if (environmentSensorEvent.CurrentPM25 != null)
+                {
+                    lines.Add($"{deviceName} measured a PM25 of {environmentSensorEvent.CurrentPM25}");
+                }
+
+                if (environmentSensorEvent.CurrentRH != null)
+                {
+                    lines.Add($"{deviceName} measured a relative humidity of {environmentSensorEvent.CurrentRH}");
+                }
+
+                if (environmentSensorEvent.CurrentCO2 != null)
+                {
+                    lines.Add($"{deviceName} measured a CO2 level of {environmentSensorEvent.CurrentCO2}");
+                }
+            }
+
+            if (changedEvent is LightEventAttributes lightEvent)
+            {
+                if (lightEvent.IsOn != null)
+                {
+                    lines.Add(lightEvent.IsOn.Value ? $"{deviceName} was turned on" : $"{deviceName} was turned off");
+                }
+
+                if (lightEvent.LightLevel != null)
+                {
+                    lines.Add($"The lightlevel of {deviceName} was changed to {lightEvent.LightLevel}");
+                }
+            }
+
+            if (changedEvent is LightSensorEventAttributes lightSensorEvent)
+            {
+                if (lightSensorEvent.Illuminance != null)
+                {
+                    lines.Add($"The illuminance of {deviceName} was changed to {lightSensorEvent.Illuminance}");
+                }
+            }
+
+            if (changedEvent is MotionSensorEventAttributes motionSensorEvent)
+            {
+                if (motionSensorEvent.IsDetected != null)
+                {
+                    lines.Add($"{deviceName} detected motion");
+                }
+
+                if (motionSensorEvent.LightLevel != null)
+                {
+                    lines.Add($"The lightlevel of {deviceName} was changed to {motionSensorEvent.LightLevel}");
+                }
+
+                if (motionSensorEvent.BatteryPercentage != null)
+                {
+                    lines.Add($"{deviceName} has a batterypercentage of {motionSensorEvent.BatteryPercentage}%");
+                }
+            }
+
+
+            if (changedEvent is OutletEventAttributes outletEvent)
+            {
+                if (outletEvent.CurrentVoltage != null)
+                {
+                    lines.Add($"{deviceName} measured voltage of {outletEvent.CurrentVoltage}");
+                }
+
+                if (outletEvent.CurrentAmps != null)
+                {
+                    lines.Add($"{deviceName} measured ampere of {outletEvent.CurrentAmps}");
+                }
+
+                if (outletEvent.CurrentActivePower != null)
+                {
+                    lines.Add($"{deviceName} measured power of {outletEvent.CurrentActivePower}");
+                }
+
+                if (outletEvent.TotalEnergyConsumed != null)
+                {
+                    lines.Add($"{deviceName} has consumed a total of {outletEvent.TotalEnergyConsumed} power");
+                }
+            }
+
+
+            if (changedEvent is WaterSensorEventAttributes waterSensorEvent)
+            {
+                if (waterSensorEvent.WaterLeakDetected != null)
+                {
+                    lines.Add($"{deviceName} detected something with water");
+                }
+                if (waterSensorEvent.BatteryPercentage != null)
+                {
+                    lines.Add($"{deviceName} has a batterypercentage of {waterSensorEvent.BatteryPercentage}%");
+                }
+            }
+
+            if (changedEvent is UnknownEventAttributes unknownEvent)
+            {
+                lines.Add(unknownEvent.Json);
+            }
+
+            return lines;
         }
 
     }

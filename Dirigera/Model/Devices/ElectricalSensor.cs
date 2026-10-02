@@ -51,26 +51,10 @@ public class ElectricalSensorAttributes : Attributes
     public DateTime TimeOfLastEnergyReset { get; set; }
 }
 
-public class ElectricalSensorEventAttributes : EventAttributes
+/// <summary>
+/// The hub sends the same metering fields an outlet sends, so anything that reads an outlet's
+/// power readings picks these up as well.
+/// </summary>
+public class ElectricalSensorEventAttributes : OutletEventAttributes
 {
-    [JsonProperty("currentActivePower")]
-    public double? CurrentActivePower { get; set; }
-
-    [JsonProperty("currentAmps")]
-    public double? CurrentAmps { get; set; }
-
-    [JsonProperty("currentVoltage")]
-    public double? CurrentVoltage { get; set; }
-
-    [JsonProperty("totalEnergyConsumed")]
-    public double? TotalEnergyConsumed { get; set; }
-
-    [JsonProperty("totalEnergyConsumedLastUpdated")]
-    public DateTime? TotalEnergyConsumedLastUpdated { get; set; }
-
-    [JsonProperty("energyConsumedAtLastReset")]
-    public double? EnergyConsumedAtLastReset { get; set; }
-
-    [JsonProperty("timeOfLastEnergyReset")]
-    public DateTime? TimeOfLastEnergyReset { get; set; }
 }

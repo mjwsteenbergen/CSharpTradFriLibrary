@@ -85,22 +85,22 @@ public class OutletEventAttributes : EventAttributes
     public long? StartUpCurrentLevel { get; set; }
 
     [JsonProperty("currentVoltage")]
-    public long? CurrentVoltage { get; set; }
+    public double? CurrentVoltage { get; set; }
 
     [JsonProperty("currentAmps")]
-    public long? CurrentAmps { get; set; }
+    public double? CurrentAmps { get; set; }
 
     [JsonProperty("currentActivePower")]
-    public long? CurrentActivePower { get; set; }
+    public double? CurrentActivePower { get; set; }
 
     [JsonProperty("totalEnergyConsumed")]
-    public long? TotalEnergyConsumed { get; set; }
+    public double? TotalEnergyConsumed { get; set; }
 
     [JsonProperty("totalEnergyConsumedLastUpdated")]
     public DateTime? TotalEnergyConsumedLastUpdated { get; set; }
 
     [JsonProperty("energyConsumedAtLastReset")]
-    public long? EnergyConsumedAtLastReset { get; set; }
+    public double? EnergyConsumedAtLastReset { get; set; }
 
     [JsonProperty("timeOfLastEnergyReset")]
     public DateTime? TimeOfLastEnergyReset { get; set; }

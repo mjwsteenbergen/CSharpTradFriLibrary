@@ -34,7 +34,9 @@ public class DeviceConverter : JsonConverter<DirigeraDevice>
             "lightSensor" => new LightSensor(),
             "outlet" => new Outlet(),
             "waterSensor" => new WaterSensor(),
-            _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + "\n" + jObject.ToString())
+            "electricalSensor" => new ElectricalSensor(),
+            // One device type we have no class for must not fail the whole device list.
+            _ => new UnknownDevice { Json = jObject.ToString() }
         };
 
 
@@ -75,6 +77,26 @@ public abstract class DirigeraDevice : ObjectSearcher<DirigeraController>
     public string LastSeen { get; set; }
 
     public abstract string GetName();
+}
+
+/// <summary>
+/// A device whose deviceType this library does not model yet. <see cref="Json"/> holds the
+/// device as the hub sent it.
+/// </summary>
+public class UnknownDevice : DirigeraDevice
+{
+    [JsonIgnore]
+    public string Json { get; set; }
+
+    [JsonProperty("attributes")]
+    public Attributes? Attributes { get; set; }
+
+    public override string GetName() => Attributes?.CustomName ?? Id;
+
+    public override string ToString()
+    {
+        return GetName() + $"[{DeviceType}]";
+    }
 }
 
 public class EventDirigeraDevice

@@ -113,6 +113,7 @@ public class DirigeraStateChangedEventDataConverter : JsonConverter<DirigeraStat
             "lightSensor" => new LightSensorEventAttributes(),
             "outlet" => new OutletEventAttributes(),
             "waterSensor" => new WaterSensorEventAttributes(),
+            "electricalSensor" => new ElectricalSensorEventAttributes(),
             _ => new UnknownEventAttributes
             {
                 DeviceType = deviceType,

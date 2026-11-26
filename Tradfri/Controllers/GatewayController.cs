@@ -1,6 +1,6 @@
-﻿using ApiLibs;
-using ApiLibs.General;
-using Newtonsoft.Json;
+﻿using ApiLibs.JSON;
+using ApiLibs.JSON.General;
+using System.Text.Json.Serialization;
 using Org.BouncyCastle.Asn1.Cms;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -172,12 +172,12 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
     }
     internal class AddDeviceRequest
     {
-        [JsonProperty("9061")]
+        [JsonPropertyName("9061")]
         public int CommissioningMode { get; set; }
     }
     internal class AddDeviceGroupRequest : AddDeviceRequest
     {
-        [JsonProperty("9064")]
+        [JsonPropertyName("9064")]
         public long CommissioningGroupID { get; set; }
     }
 }

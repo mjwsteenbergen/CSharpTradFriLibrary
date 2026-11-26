@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using ApiLibs.MicrosoftGraph;
-using Martijn.Extensions.Linq;
+using ApiLibs.JSON.MicrosoftGraph;
+using Martijn.Extensions.JSON.Linq;
 
 
 // using Martijn.Extensions.Linq;

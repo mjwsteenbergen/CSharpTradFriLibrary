@@ -1,42 +1,31 @@
+using ApiLibs.JSON.Serialization;
+using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class LightAttributeConverter : JsonConverter<LightAttributes>
-
 {
-    public override LightAttributes ReadJson(JsonReader reader, Type objectType, [AllowNull] LightAttributes existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override LightAttributes Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        JToken jToken = JToken.ReadFrom(reader);
-
-        LightAttributes getLightAttribute()
+        JsonElement json;
+        using (var document = JsonDocument.ParseValue(ref reader))
         {
-            try
-            {
-                if (jToken.Type is not JTokenType.None and not JTokenType.Null && jToken is JObject jObject)
-                {
-                    if (jObject.Property("colorMode") != null)
-                    {
-                        return new TemperatureLightAttributes();
-                    }
-                }
-            }
-            catch { }
-            return new LightAttributes();
-        };
+            json = document.RootElement.Clone();
+        }
 
-        LightAttributes result = getLightAttribute();
-        serializer.Populate(jToken.CreateReader(), result);
+        LightAttributes result = json.ValueKind == JsonValueKind.Object && json.TryGetProperty("colorMode", out _)
+            ? new TemperatureLightAttributes()
+            : new LightAttributes();
+
+        JsonCompat.Populate(json, result);
         return result;
     }
 
-    public override bool CanWrite => false;
-
-    public override void WriteJson(JsonWriter writer, [AllowNull] LightAttributes value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, LightAttributes value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        JsonCompat.WriteDefault(writer, value, options);
     }
 }
 
@@ -44,10 +33,10 @@ public class LightAttributeConverter : JsonConverter<LightAttributes>
 
 public class Light : DirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public LightAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
     public override string GetName() => Attributes.CustomName;
 
@@ -77,63 +66,63 @@ public class Light : DirigeraDevice
 public class LightAttributes : Attributes
 {
 
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool IsOn { get; set; }
 
-    [JsonProperty("startupOnOff")]
+    [JsonPropertyName("startupOnOff")]
     public string StartupOnOff { get; set; }
 
-    [JsonProperty("lightLevel")]
+    [JsonPropertyName("lightLevel")]
     public long LightLevel { get; set; }
 
-    [JsonProperty("startUpCurrentLevel")]
+    [JsonPropertyName("startUpCurrentLevel")]
     public long StartUpCurrentLevel { get; set; }
 }
 
 public class TemperatureLightAttributes : LightAttributes
 {
-    [JsonProperty("colorMode")]
+    [JsonPropertyName("colorMode")]
     public string ColorMode { get; set; }
 
-    [JsonProperty("startupTemperature")]
+    [JsonPropertyName("startupTemperature")]
     public long StartupTemperature { get; set; }
 
-    [JsonProperty("colorTemperature")]
+    [JsonPropertyName("colorTemperature")]
     public long ColorTemperature { get; set; }
 
-    [JsonProperty("colorTemperatureMax")]
+    [JsonPropertyName("colorTemperatureMax")]
     public long ColorTemperatureMax { get; set; }
 
-    [JsonProperty("colorTemperatureMin")]
+    [JsonPropertyName("colorTemperatureMin")]
     public long ColorTemperatureMin { get; set; }
 }
 
 public class LightEventAttributes : EventAttributes
 {
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool? IsOn { get; set; }
 
-    [JsonProperty("startupOnOff")]
+    [JsonPropertyName("startupOnOff")]
     public string? StartupOnOff { get; set; }
 
-    [JsonProperty("lightLevel")]
+    [JsonPropertyName("lightLevel")]
     public long? LightLevel { get; set; }
 
-    [JsonProperty("startUpCurrentLevel")]
+    [JsonPropertyName("startUpCurrentLevel")]
     public long? StartUpCurrentLevel { get; set; }
 
-    [JsonProperty("colorMode")]
+    [JsonPropertyName("colorMode")]
     public string? ColorMode { get; set; }
 
-    [JsonProperty("startupTemperature")]
+    [JsonPropertyName("startupTemperature")]
     public long? StartupTemperature { get; set; }
 
-    [JsonProperty("colorTemperature")]
+    [JsonPropertyName("colorTemperature")]
     public long? ColorTemperature { get; set; }
 
-    [JsonProperty("colorTemperatureMax")]
+    [JsonPropertyName("colorTemperatureMax")]
     public long? ColorTemperatureMax { get; set; }
 
-    [JsonProperty("colorTemperatureMin")]
+    [JsonPropertyName("colorTemperatureMin")]
     public long? ColorTemperatureMin { get; set; }
 }

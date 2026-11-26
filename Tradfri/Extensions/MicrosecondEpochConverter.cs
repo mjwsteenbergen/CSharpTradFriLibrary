@@ -1,28 +1,31 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Tradfri.Extensions
 {
-    public class MicrosecondEpochConverter : DateTimeConverterBase
+    public class MicrosecondEpochConverter : JsonConverter<DateTime>
     {
         private static readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        // A JSON null becomes DateTime.MinValue rather than an error.
+        public override bool HandleNull => true;
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteRawValue(((DateTime)value - _epoch).TotalMilliseconds + "000");
+            writer.WriteRawValue((value - _epoch).TotalMilliseconds + "000", skipInputValidation: true);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.Value == null)
+            if (reader.TokenType == JsonTokenType.Null)
                 return DateTime.MinValue;
-            else if (CheckNumberOfDigits((long)reader.Value) == 16)
-                return _epoch.AddMilliseconds((long)reader.Value / 1000);
-            return _epoch.AddMilliseconds((long)reader.Value * 1000);
+
+            long value = reader.GetInt64();
+            if (CheckNumberOfDigits(value) == 16)
+                return _epoch.AddMilliseconds(value / 1000);
+            return _epoch.AddMilliseconds(value * 1000);
         }
-
-
 
         private static int CheckNumberOfDigits(long n)
         {

@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using ApiLibs;
+using ApiLibs.JSON;
 using Com.AugustCellars.CoAP;
 using Com.AugustCellars.CoAP.DTLS;
-using Newtonsoft.Json;
+using ApiLibs.JSON.Serialization;
 
 namespace Tomidix.NetStandard.Tradfri.Extensions
 {
@@ -12,7 +12,7 @@ namespace Tomidix.NetStandard.Tradfri.Extensions
         internal CoapClient _coapClient;
 
 
-        public override async Task<RequestResponse> ExecuteRequest(Service service2, ApiLibs.Request request)
+        public override async Task<RequestResponse> ExecuteRequest(Service service2, ApiLibs.JSON.Request request)
         {
             var coapRequest = new Com.AugustCellars.CoAP.Request(ConvertToMethod(request.Method))
             {
@@ -69,10 +69,7 @@ namespace Tomidix.NetStandard.Tradfri.Extensions
             return content switch
             {
                 string text => text,
-                var randomObject => JsonConvert.SerializeObject(randomObject, new JsonSerializerSettings()
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                })
+                var randomObject => JsonCompat.Serialize(randomObject, ignoreNullValues: true)
             };
         }
 
@@ -114,7 +111,7 @@ namespace Tomidix.NetStandard.Tradfri.Extensions
         }
     }
 
-    public class WatchRequest : ApiLibs.Request
+    public class WatchRequest : ApiLibs.JSON.Request
     {
         public WatchRequest(string endPoint) : base(endPoint)
         {

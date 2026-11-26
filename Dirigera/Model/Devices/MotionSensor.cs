@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -6,10 +6,10 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class MotionSensor : DirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public MotionSensorAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
 
     public Task SetMotionDetectedDelay(int delay)
@@ -28,75 +28,75 @@ public class MotionSensor : DirigeraDevice
 
 public class MotionSensorAttributes : Attributes
 {
-    [JsonProperty("batteryPercentage")]
+    [JsonPropertyName("batteryPercentage")]
     public long BatteryPercentage { get; set; }
 
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool IsOn { get; set; }
 
-    [JsonProperty("isDetected")]
+    [JsonPropertyName("isDetected")]
     public bool IsDetected { get; set; }
 
-    [JsonProperty("motionDetectedDelay")]
+    [JsonPropertyName("motionDetectedDelay")]
     public long MotionDetectedDelay { get; set; }
 
-    [JsonProperty("sensorConfig")]
+    [JsonPropertyName("sensorConfig")]
     public SensorConfig SensorConfig { get; set; }
 
-    [JsonProperty("circadianPresets")]
+    [JsonPropertyName("circadianPresets")]
     public object[] CircadianPresets { get; set; }
 
-    [JsonProperty("lightLevel")]
+    [JsonPropertyName("lightLevel")]
     public int? LightLevel { get; set; }
 }
 
 public partial class SensorConfig
 {
-    [JsonProperty("scheduleOn")]
+    [JsonPropertyName("scheduleOn")]
     public bool ScheduleOn { get; set; }
 
-    [JsonProperty("onDuration")]
+    [JsonPropertyName("onDuration")]
     public long OnDuration { get; set; }
 
-    [JsonProperty("schedule")]
+    [JsonPropertyName("schedule")]
     public Schedule Schedule { get; set; }
 }
 
 public partial class Schedule
 {
-    [JsonProperty("onCondition")]
+    [JsonPropertyName("onCondition")]
     public Condition OnCondition { get; set; }
 
-    [JsonProperty("offCondition")]
+    [JsonPropertyName("offCondition")]
     public Condition OffCondition { get; set; }
 }
 
 public partial class Condition
 {
-    [JsonProperty("time")]
+    [JsonPropertyName("time")]
     public string Time { get; set; }
 }
 
 public class MotionSensorEventAttributes : EventAttributes
 {
-    [JsonProperty("batteryPercentage")]
+    [JsonPropertyName("batteryPercentage")]
     public long? BatteryPercentage { get; set; }
 
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool? IsOn { get; set; }
 
-    [JsonProperty("isDetected")]
+    [JsonPropertyName("isDetected")]
     public bool? IsDetected { get; set; }
 
-    [JsonProperty("motionDetectedDelay")]
+    [JsonPropertyName("motionDetectedDelay")]
     public long? MotionDetectedDelay { get; set; }
 
-    [JsonProperty("sensorConfig")]
+    [JsonPropertyName("sensorConfig")]
     public SensorConfig? SensorConfig { get; set; }
 
-    [JsonProperty("circadianPresets")]
+    [JsonPropertyName("circadianPresets")]
     public object[]? CircadianPresets { get; set; }
 
-    [JsonProperty("lightLevel")]
+    [JsonPropertyName("lightLevel")]
     public int? LightLevel { get; set; }
 }

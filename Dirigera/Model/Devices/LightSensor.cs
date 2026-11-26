@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -6,10 +6,10 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class LightSensor : DirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public LightSensorAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
 
     public override string GetName() => Attributes.CustomName;
@@ -23,12 +23,12 @@ public class LightSensor : DirigeraDevice
 
 public class LightSensorAttributes : Attributes
 {
-    [JsonProperty("illuminance")]
+    [JsonPropertyName("illuminance")]
     public long Illuminance { get; set; }
 }
 
 public class LightSensorEventAttributes : EventAttributes
 {
-    [JsonProperty("illuminance")]
+    [JsonPropertyName("illuminance")]
     public long? Illuminance { get; set; }
 }

@@ -1,24 +1,28 @@
+using ApiLibs.JSON.Serialization;
+using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 using Tomidix.NetStandard.Dirigera.Devices;
 
 namespace Tomidix.NetStandard.Dirigera.Model.Events;
 
 public class EventConverter : JsonConverter<DirigeraEvent>
-
 {
-    public override DirigeraEvent ReadJson(JsonReader reader, Type objectType, [AllowNull] DirigeraEvent existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override DirigeraEvent Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        JToken jObject = JToken.ReadFrom(reader);
+        JsonElement json;
+        using (var document = JsonDocument.ParseValue(ref reader))
+        {
+            json = document.RootElement.Clone();
+        }
 
         string type = "";
 
         try
         {
-            if (jObject.Type is not JTokenType.None and not JTokenType.Null)
+            if (json.ValueKind is not JsonValueKind.Undefined and not JsonValueKind.Null)
             {
-                type = jObject["type"]?.ToObject<string>() ?? "";
+                type = JsonCompat.ValueAsString(json.GetProperty("type")) ?? "";
             }
         }
         catch { }
@@ -30,16 +34,13 @@ public class EventConverter : JsonConverter<DirigeraEvent>
             _ => new UnknownEvent()
         };
 
-
-        serializer.Populate(jObject.CreateReader(), result);
+        JsonCompat.Populate(json, result);
         return result;
     }
 
-    public override bool CanWrite => false;
-
-    public override void WriteJson(JsonWriter writer, [AllowNull] DirigeraEvent value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, DirigeraEvent value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        JsonCompat.WriteDefault(writer, value, options);
     }
 }
 
@@ -48,62 +49,68 @@ public class EventConverter : JsonConverter<DirigeraEvent>
 [JsonConverter(typeof(EventConverter))]
 public class DirigeraEvent
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("time")]
+    [JsonPropertyName("time")]
     public DateTimeOffset Time { get; set; }
 
-    [JsonProperty("specversion")]
+    [JsonPropertyName("specversion")]
     public string Specversion { get; set; }
 
-    [JsonProperty("source")]
+    [JsonPropertyName("source")]
     public string Source { get; set; }
 
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 }
 
 public class UnknownEvent : DirigeraEvent
 {
-    [JsonProperty("data")]
+    [JsonPropertyName("data")]
     public dynamic Data { get; set; }
 }
 
 public class DirigeraStateChangedEvent : DirigeraEvent
 {
-    [JsonProperty("data")]
+    [JsonPropertyName("data")]
     public DirigeraStateChangedEventData Data { get; set; }
 }
 
 public class DirigeraPongEvent : DirigeraEvent
 {
-    [JsonProperty("data")]
+    [JsonPropertyName("data")]
     public DirigeraPongEventData Data { get; set; }
 }
 
 
 public class DirigeraPongEventData
 {
-    [JsonProperty("lastModified")]
+    [JsonPropertyName("lastModified")]
     public string LastModified { get; set; }
 }
 
 [JsonConverter(typeof(DirigeraStateChangedEventDataConverter))]
 public class DirigeraStateChangedEventData : EventDirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public EventAttributes Attributes { get; set; }
 }
 
 public class DirigeraStateChangedEventDataConverter : JsonConverter<DirigeraStateChangedEventData>
-
 {
-    public override DirigeraStateChangedEventData ReadJson(JsonReader reader, Type objectType, [AllowNull] DirigeraStateChangedEventData existingValue, bool hasExistingValue, JsonSerializer serializer)
-    {
-        JObject jObject = JObject.Load(reader);
+    private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
 
-        string deviceType = jObject["deviceType"]?.ToObject<string>() ?? "";
+    public override DirigeraStateChangedEventData Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        JsonElement json;
+        using (var document = JsonDocument.ParseValue(ref reader))
+        {
+            json = document.RootElement.Clone();
+        }
+
+        string deviceType = json.TryGetProperty("deviceType", out var deviceTypeToken) ? JsonCompat.ValueAsString(deviceTypeToken) ?? "" : "";
+        bool hasAttributes = json.TryGetProperty("attributes", out var attributesToken);
 
         EventAttributes attributes = deviceType switch
         {
@@ -117,26 +124,23 @@ public class DirigeraStateChangedEventDataConverter : JsonConverter<DirigeraStat
             _ => new UnknownEventAttributes
             {
                 DeviceType = deviceType,
-                Json = jObject["attributes"]?.ToString(Formatting.Indented)
+                Json = hasAttributes ? JsonSerializer.Serialize(attributesToken, Indented) : null!
             }
         };
 
-        JToken attributesToken = jObject["attributes"];
-        if (attributesToken != null)
-            serializer.Populate(attributesToken.CreateReader(), attributes);
+        if (hasAttributes)
+            JsonCompat.Populate(attributesToken, attributes);
 
         // Populate all other properties on DirigeraEvent automatically
         var result = new DirigeraStateChangedEventData { Attributes = attributes };
-        serializer.Populate(jObject.CreateReader(), result);
+        JsonCompat.Populate(json, result);
 
         return result;
     }
 
-    public override bool CanWrite => false;
-
-    public override void WriteJson(JsonWriter writer, [AllowNull] DirigeraStateChangedEventData value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, DirigeraStateChangedEventData value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        JsonCompat.WriteDefault(writer, value, options);
     }
 }
 

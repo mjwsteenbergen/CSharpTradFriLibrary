@@ -1,26 +1,30 @@
+using ApiLibs.JSON.Serialization;
+using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using ApiLibs.General;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using ApiLibs.JSON.General;
+using System.Text.Json.Serialization;
 using Tomidix.NetStandard.Dirigera.Controller;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class DeviceConverter : JsonConverter<DirigeraDevice>
-
 {
-    public override DirigeraDevice ReadJson(JsonReader reader, Type objectType, [AllowNull] DirigeraDevice existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override DirigeraDevice Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        JToken jObject = JToken.ReadFrom(reader);
+        JsonElement json;
+        using (var document = JsonDocument.ParseValue(ref reader))
+        {
+            json = document.RootElement.Clone();
+        }
 
         string type = "";
 
         try
         {
-            if (jObject.Type is not JTokenType.None and not JTokenType.Null)
+            if (json.ValueKind is not JsonValueKind.Undefined and not JsonValueKind.Null)
             {
-                type = jObject["deviceType"]?.ToObject<string>() ?? "";
+                type = JsonCompat.ValueAsString(json.GetProperty("deviceType")) ?? "";
             }
         }
         catch { }
@@ -35,19 +39,16 @@ public class DeviceConverter : JsonConverter<DirigeraDevice>
             "outlet" => new Outlet(),
             "waterSensor" => new WaterSensor(),
             "electricalSensor" => new ElectricalSensor(),
-            _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + "\n" + jObject.ToString())
+            _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + "\n" + json.GetRawText())
         };
 
-
-        serializer.Populate(jObject.CreateReader(), result);
+        JsonCompat.Populate(json, result);
         return result;
     }
 
-    public override bool CanWrite => false;
-
-    public override void WriteJson(JsonWriter writer, [AllowNull] DirigeraDevice value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, DirigeraDevice value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        JsonCompat.WriteDefault(writer, value, options);
     }
 }
 
@@ -57,22 +58,22 @@ public class DeviceConverter : JsonConverter<DirigeraDevice>
 [JsonConverter(typeof(DeviceConverter))]
 public abstract class DirigeraDevice : ObjectSearcher<DirigeraController>
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 
-    [JsonProperty("deviceType")]
+    [JsonPropertyName("deviceType")]
     public string DeviceType { get; set; }
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public string CreatedAt { get; set; }
 
-    [JsonProperty("isReachable")]
+    [JsonPropertyName("isReachable")]
     public bool IsReachable { get; set; }
 
-    [JsonProperty("lastSeen")]
+    [JsonPropertyName("lastSeen")]
     public string LastSeen { get; set; }
 
     public abstract string GetName();
@@ -80,123 +81,123 @@ public abstract class DirigeraDevice : ObjectSearcher<DirigeraController>
 
 public class EventDirigeraDevice
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 
-    [JsonProperty("deviceType")]
+    [JsonPropertyName("deviceType")]
     public string DeviceType { get; set; }
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public string CreatedAt { get; set; }
 
-    [JsonProperty("isReachable")]
+    [JsonPropertyName("isReachable")]
     public bool IsReachable { get; set; }
 
-    [JsonProperty("lastSeen")]
+    [JsonPropertyName("lastSeen")]
     public string LastSeen { get; set; }
 }
 
 public partial class Attributes
 {
-    [JsonProperty("customName")]
+    [JsonPropertyName("customName")]
     public string CustomName { get; set; }
 
-    [JsonProperty("model")]
+    [JsonPropertyName("model")]
     public string Model { get; set; }
 
-    [JsonProperty("manufacturer")]
+    [JsonPropertyName("manufacturer")]
     public string Manufacturer { get; set; }
 
-    [JsonProperty("firmwareVersion")]
+    [JsonPropertyName("firmwareVersion")]
     public string FirmwareVersion { get; set; }
 
-    [JsonProperty("hardwareVersion")]
+    [JsonPropertyName("hardwareVersion")]
     public string HardwareVersion { get; set; }
 
-    [JsonProperty("serialNumber")]
+    [JsonPropertyName("serialNumber")]
     public string SerialNumber { get; set; }
 
-    [JsonProperty("productCode")]
+    [JsonPropertyName("productCode")]
     public string ProductCode { get; set; }
 
-    [JsonProperty("identifyPeriod")]
+    [JsonPropertyName("identifyPeriod")]
     public long IdentifyPeriod { get; set; }
 
-    [JsonProperty("identifyStarted")]
+    [JsonPropertyName("identifyStarted")]
     public DateTimeOffset IdentifyStarted { get; set; }
 
-    [JsonProperty("permittingJoin")]
+    [JsonPropertyName("permittingJoin")]
     public bool PermittingJoin { get; set; }
 
-    [JsonProperty("otaPolicy")]
+    [JsonPropertyName("otaPolicy")]
     public string OtaPolicy { get; set; }
 
-    [JsonProperty("otaProgress")]
+    [JsonPropertyName("otaProgress")]
     public long OtaProgress { get; set; }
 
-    [JsonProperty("otaScheduleEnd")]
+    [JsonPropertyName("otaScheduleEnd")]
     public string OtaScheduleEnd { get; set; }
 
-    [JsonProperty("otaScheduleStart")]
+    [JsonPropertyName("otaScheduleStart")]
     public string OtaScheduleStart { get; set; }
 
-    [JsonProperty("otaState")]
+    [JsonPropertyName("otaState")]
     public string OtaState { get; set; }
 
-    [JsonProperty("otaStatus")]
+    [JsonPropertyName("otaStatus")]
     public string OtaStatus { get; set; }
 }
 
 public abstract class EventAttributes
 {
-    [JsonProperty("customName")]
+    [JsonPropertyName("customName")]
     public string? CustomName { get; set; }
 
-    [JsonProperty("model")]
+    [JsonPropertyName("model")]
     public string? Model { get; set; }
 
-    [JsonProperty("manufacturer")]
+    [JsonPropertyName("manufacturer")]
     public string? Manufacturer { get; set; }
 
-    [JsonProperty("firmwareVersion")]
+    [JsonPropertyName("firmwareVersion")]
     public string? FirmwareVersion { get; set; }
 
-    [JsonProperty("hardwareVersion")]
+    [JsonPropertyName("hardwareVersion")]
     public string? HardwareVersion { get; set; }
 
-    [JsonProperty("serialNumber")]
+    [JsonPropertyName("serialNumber")]
     public string? SerialNumber { get; set; }
 
-    [JsonProperty("productCode")]
+    [JsonPropertyName("productCode")]
     public string? ProductCode { get; set; }
 
-    [JsonProperty("identifyPeriod")]
+    [JsonPropertyName("identifyPeriod")]
     public long? IdentifyPeriod { get; set; }
 
-    [JsonProperty("identifyStarted")]
+    [JsonPropertyName("identifyStarted")]
     public DateTimeOffset? IdentifyStarted { get; set; }
 
-    [JsonProperty("permittingJoin")]
+    [JsonPropertyName("permittingJoin")]
     public bool? PermittingJoin { get; set; }
 
-    [JsonProperty("otaPolicy")]
+    [JsonPropertyName("otaPolicy")]
     public string? OtaPolicy { get; set; }
 
-    [JsonProperty("otaProgress")]
+    [JsonPropertyName("otaProgress")]
     public long? OtaProgress { get; set; }
 
-    [JsonProperty("otaScheduleEnd")]
+    [JsonPropertyName("otaScheduleEnd")]
     public string? OtaScheduleEnd { get; set; }
 
-    [JsonProperty("otaScheduleStart")]
+    [JsonPropertyName("otaScheduleStart")]
     public string? OtaScheduleStart { get; set; }
 
-    [JsonProperty("otaState")]
+    [JsonPropertyName("otaState")]
     public string? OtaState { get; set; }
 
-    [JsonProperty("otaStatus")]
+    [JsonPropertyName("otaStatus")]
     public string? OtaStatus { get; set; }
 }

@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -6,10 +6,10 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class EnvironmentSensor : DirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public EnvironmentSensorAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
 
     public override string GetName() => Attributes.CustomName;
@@ -22,63 +22,63 @@ public class EnvironmentSensor : DirigeraDevice
 
 public partial class Room
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonProperty("color")]
+    [JsonPropertyName("color")]
     public string Color { get; set; }
 
-    [JsonProperty("icon")]
+    [JsonPropertyName("icon")]
     public string Icon { get; set; }
 }
 
 public class EnvironmentSensorAttributes : Attributes
 {
-    [JsonProperty("currentTemperature")]
+    [JsonPropertyName("currentTemperature")]
     public int CurrentTemperature { get; set; }
 
-    [JsonProperty("currentRH")]
+    [JsonPropertyName("currentRH")]
     public int CurrentRH { get; set; }
 
-    [JsonProperty("currentPM25")]
+    [JsonPropertyName("currentPM25")]
     public int CurrentPM25 { get; set; }
 
-    [JsonProperty("maxMeasuredPM25")]
+    [JsonPropertyName("maxMeasuredPM25")]
     public int MaxMeasuredPM25 { get; set; }
 
-    [JsonProperty("minMeasuredPM25")]
+    [JsonPropertyName("minMeasuredPM25")]
     public int MinMeasuredPM25 { get; set; }
 
-    [JsonProperty("vocIndex")]
+    [JsonPropertyName("vocIndex")]
     public int VocIndex { get; set; }
 
-    [JsonProperty("currentCO2")]
+    [JsonPropertyName("currentCO2")]
     public int? CurrentCO2 { get; set; }
 }
 
 public class EnvironmentSensorEventAttributes : EventAttributes
 {
-    [JsonProperty("currentTemperature")]
+    [JsonPropertyName("currentTemperature")]
     public int? CurrentTemperature { get; set; }
 
-    [JsonProperty("currentRH")]
+    [JsonPropertyName("currentRH")]
     public int? CurrentRH { get; set; }
 
-    [JsonProperty("currentPM25")]
+    [JsonPropertyName("currentPM25")]
     public int? CurrentPM25 { get; set; }
 
-    [JsonProperty("maxMeasuredPM25")]
+    [JsonPropertyName("maxMeasuredPM25")]
     public int? MaxMeasuredPM25 { get; set; }
 
-    [JsonProperty("minMeasuredPM25")]
+    [JsonPropertyName("minMeasuredPM25")]
     public int? MinMeasuredPM25 { get; set; }
 
-    [JsonProperty("vocIndex")]
+    [JsonPropertyName("vocIndex")]
     public int? VocIndex { get; set; }
 
-    [JsonProperty("currentCO2")]
+    [JsonPropertyName("currentCO2")]
     public int? CurrentCO2 { get; set; }
 }

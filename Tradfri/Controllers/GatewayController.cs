@@ -27,7 +27,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
         /// <returns></returns>
         public async Task<GatewayInfo> GetGatewayInfo()
         {
-            return await MakeRequest(TradfriJson.Request<GatewayInfo>($"/{(int)TradfriConstRoot.Gateway}/{(int)TradfriConstAttr.GatewayInfo}"));
+            return await MakeRequest<GatewayInfo>($"/{(int)TradfriConstRoot.Gateway}/{(int)TradfriConstAttr.GatewayInfo}");
         }
 
         /// <summary>
@@ -149,11 +149,11 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
         public async Task<List<TradfriMood>> GetMoods()
         {
             List<TradfriMood> moods = new List<TradfriMood>();
-            foreach (int groupID in await MakeRequest(TradfriJson.Request<List<int>>($"/{(int)TradfriConstRoot.Moods}")))
+            foreach (int groupID in await MakeRequest<List<int>>($"/{(int)TradfriConstRoot.Moods}"))
             {
-                foreach (int moodID in await MakeRequest(TradfriJson.Request<List<int>>($"/{(int)TradfriConstRoot.Moods}/{groupID}")))
+                foreach (int moodID in await MakeRequest<List<int>>($"/{(int)TradfriConstRoot.Moods}/{groupID}"))
                 {
-                    TradfriMood mood = await MakeRequest(TradfriJson.Request<TradfriMood>($"/{(int)TradfriConstRoot.Moods}/{groupID}/{moodID}"));
+                    TradfriMood mood = await MakeRequest<TradfriMood>($"/{(int)TradfriConstRoot.Moods}/{groupID}/{moodID}");
                     mood.GroupID = groupID;
                     moods.Add(mood);
                 }
@@ -168,7 +168,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
 
         private Task<List<long>> GetEntityCollectionIDs(TradfriConstRoot rootConst)
         {
-            return MakeRequest(TradfriJson.Request<List<long>>($"/{(int)rootConst}"));
+            return MakeRequest<List<long>>($"/{(int)rootConst}");
         }
     }
     internal class AddDeviceRequest

@@ -106,13 +106,13 @@ namespace Tomidix.NetStandard.Tradfri
             var ep = new DTLSClientEndPoint(authKey);
             ep.Start();
 
-            return MakeRequest(TradfriJson.Configure(new EndPointRequest<TradfriAuth>($"/{(int)TradfriConstRoot.Gateway}/{(int)TradfriConstAttr.Auth}/")
+            return MakeRequest(new EndPointRequest<TradfriAuth>($"/{(int)TradfriConstRoot.Gateway}/{(int)TradfriConstAttr.Auth}/")
             {
                 Content = $"{{\"{(int)TradfriConstAttr.Identity}\":\"{applicationName}\"}}",
                 Method = Call.POST,
                 DTLSEndPoint = ep,
                 ExpectedStatusCode = HttpStatusCode.Created,
-            }));
+            });
         }
     }
 }

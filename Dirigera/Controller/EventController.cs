@@ -80,7 +80,7 @@ public class EventController : SubService<DirigeraController>
                     OnRaiseDirigeraEvent(new DirigeraEventArgs
                     {
                         Message = message,
-                        Event = JsonSerializer.Deserialize<DirigeraEvent>(split[0], DirigeraJson.Options)
+                        Event = JsonSerializer.Deserialize<DirigeraEvent>(split[0])
                     });
                 } 
                 catch (TaskCanceledException)
@@ -134,7 +134,7 @@ public class EventController : SubService<DirigeraController>
 
     private Task SendMessage(DirigeraEvent data, CancellationToken? cancellationToken = null)
     {
-        return SendMessage(JsonSerializer.Serialize(data, DirigeraJson.Options), cancellationToken);
+        return SendMessage(JsonSerializer.Serialize(data), cancellationToken);
     }
 
     private Task SendMessage(string data, CancellationToken? cancellationToken = null)

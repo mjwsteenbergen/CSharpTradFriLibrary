@@ -3,7 +3,6 @@ using ApiLibs.JSON.General;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Tomidix.NetStandard.Tradfri.Extensions;
 using Tomidix.NetStandard.Tradfri.Models;
 
 namespace Tomidix.NetStandard.Tradfri.Controllers
@@ -28,7 +27,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
         /// <returns></returns>
         public async Task<TradfriGroup> GetTradfriGroup(long id)
         {
-            return await MakeRequest(TradfriJson.Request<TradfriGroup>($"/{(int)TradfriConstRoot.Groups}/{id}"));
+            return await MakeRequest<TradfriGroup>($"/{(int)TradfriConstRoot.Groups}/{id}");
         }
 
         /// <summary>

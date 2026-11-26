@@ -14,8 +14,8 @@ public class UserController : SubService<DirigeraController>
     {
     }
 
-    public Task<List<User>> GetUsers() => MakeRequest(DirigeraJson.Request<List<User>>("users/"));
-    public Task<User> GetMe() => MakeRequest(DirigeraJson.Request<User>("users/me/"));
+    public Task<List<User>> GetUsers() => MakeRequest<List<User>>("users/");
+    public Task<User> GetMe() => MakeRequest<User>("users/me/");
 
 }
 

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Tomidix.NetStandard.Tradfri.Extensions;
 using Tomidix.NetStandard.Tradfri.Models;
 
 namespace Tomidix.NetStandard.Tradfri.Controllers
@@ -20,7 +19,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
         /// <returns></returns>
         public Task<TradfriSmartTask> GetTradfriSmartTask(long id)
         {
-            return MakeRequest(TradfriJson.Request<TradfriSmartTask>($"/{(int)TradfriConstRoot.SmartTasks}/{id}"));
+            return MakeRequest<TradfriSmartTask>($"/{(int)TradfriConstRoot.SmartTasks}/{id}");
         }
 
         public List<string> GetSelectedRepeatDays(TradfriSmartTask task)

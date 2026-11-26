@@ -24,7 +24,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
         /// <returns></returns>
         public Task<TradfriDevice> GetTradfriDevice(long id)
         {
-            return MakeRequest(TradfriJson.Request<TradfriDevice>($"/{(int)TradfriConstRoot.Devices}/{id}"));
+            return MakeRequest<TradfriDevice>($"/{(int)TradfriConstRoot.Devices}/{id}");
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(response?.PayloadString))
                 {
-                    device = JsonSerializer.Deserialize<TradfriDevice>(response.PayloadString, TradfriJson.Options);
+                    device = JsonSerializer.Deserialize<TradfriDevice>(response.PayloadString);
                     callback.Invoke(device, cancel);
                 }
             };

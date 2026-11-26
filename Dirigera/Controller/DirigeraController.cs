@@ -66,22 +66,22 @@ public class DirigeraController : RestSharpService
 
     public Task<Authorize> Authorize(string challenge)
     {
-        return MakeRequest(DirigeraJson.Request<Authorize>("oauth/authorize", Call.GET, new List<Param> {
+        return MakeRequest<Authorize>("oauth/authorize", Call.GET, new List<Param> {
             new("audience", AUDIENCE),
             new("response_type", "code"),
             new("code_challenge", challenge),
             new("code_challenge_method", CHALLENGE_METHOD)
-        }));
+        });
     }
 
     public Task<TokenObject> Pair(string dirigeraCode, string generatedCode, string name)
     {
-        return MakeRequest(DirigeraJson.Request<TokenObject>("oauth/token", Call.POST, new List<Param> {
+        return MakeRequest<TokenObject>("oauth/token", Call.POST, new List<Param> {
             new("code", dirigeraCode),
             new("name", name),
             new("grant_type", "authorization_code"),
             new("code_verifier", generatedCode),
-        }));
+        });
     }
 
     public static string Base64SafeEncode(byte[] encbuff)

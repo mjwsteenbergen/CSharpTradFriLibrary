@@ -1,4 +1,6 @@
 using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ApiLibs.JSON;
 using Com.AugustCellars.CoAP;
@@ -8,6 +10,12 @@ namespace Tomidix.NetStandard.Tradfri.Extensions
 {
     public class CoapImplementation : ICallImplementation
     {
+        // The gateway leaves out what it does not set, so request bodies leave out nulls too.
+        private static readonly JsonSerializerOptions BodyOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+
         internal CoapClient _coapClient;
 
 
@@ -68,7 +76,7 @@ namespace Tomidix.NetStandard.Tradfri.Extensions
             return content switch
             {
                 string text => text,
-                var randomObject => TradfriJson.Serialize(randomObject)
+                var randomObject => JsonSerializer.Serialize(randomObject, randomObject.GetType(), BodyOptions)
             };
         }
 

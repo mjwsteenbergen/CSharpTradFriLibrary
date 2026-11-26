@@ -14,14 +14,9 @@ public class DeviceController : SubService<DirigeraController>
         service = controller;
     }
 
-    public async Task<DirigeraDevice> GetDevice(string id)
-    {
-        var device = await MakeRequest(DirigeraJson.Request<DirigeraDevice>($"devices/{id}"));
-        device.Search(Service);
-        return device;
-    }
+    public Task<DirigeraDevice> GetDevice(string id) => MakeRequest<DirigeraDevice>($"devices/{id}");
 
-    public Task<List<DirigeraDevice>> GetDevices() => MakeRequest(DirigeraJson.Request<List<DirigeraDevice>>("devices/")).ContinueWith(task =>
+    public Task<List<DirigeraDevice>> GetDevices() => MakeRequest<List<DirigeraDevice>>("devices/").ContinueWith(task =>
     {
         task.Result.OfType<LightSensor>().Foreach(lightsensor =>
         {

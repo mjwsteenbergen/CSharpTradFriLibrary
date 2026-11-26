@@ -1,4 +1,3 @@
-using ApiLibs.JSON.Serialization;
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -8,47 +7,38 @@ using Tomidix.NetStandard.Dirigera.Controller;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
+/// <summary>Reads a device as the subclass its <c>deviceType</c> names.</summary>
 public class DeviceConverter : JsonConverter<DirigeraDevice>
 {
-    public override DirigeraDevice Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override DirigeraDevice? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        JsonElement json;
-        using (var document = JsonDocument.ParseValue(ref reader))
-        {
-            json = document.RootElement.Clone();
-        }
+        using var document = JsonDocument.ParseValue(ref reader);
+        var json = document.RootElement;
 
-        string type = "";
+        string? deviceType = json.ValueKind == JsonValueKind.Object && json.TryGetProperty("deviceType", out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString()
+            : null;
 
-        try
+        Type type = deviceType switch
         {
-            if (json.ValueKind is not JsonValueKind.Undefined and not JsonValueKind.Null)
-            {
-                type = JsonCompat.ValueAsString(json.GetProperty("deviceType")) ?? "";
-            }
-        }
-        catch { }
-
-        DirigeraDevice result = type switch
-        {
-            "environmentSensor" => new EnvironmentSensor(),
-            "gateway" => new Gateway(),
-            "light" => new Light(),
-            "motionSensor" => new MotionSensor(),
-            "lightSensor" => new LightSensor(),
-            "outlet" => new Outlet(),
-            "waterSensor" => new WaterSensor(),
-            "electricalSensor" => new ElectricalSensor(),
-            _ => throw new ArgumentOutOfRangeException("Cannot convert type " + type + "\n" + json.GetRawText())
+            "environmentSensor" => typeof(EnvironmentSensor),
+            "gateway" => typeof(Gateway),
+            "light" => typeof(Light),
+            "motionSensor" => typeof(MotionSensor),
+            "lightSensor" => typeof(LightSensor),
+            "outlet" => typeof(Outlet),
+            "waterSensor" => typeof(WaterSensor),
+            "electricalSensor" => typeof(ElectricalSensor),
+            _ => throw new JsonException($"Unknown deviceType '{deviceType}': {json.GetRawText()}")
         };
 
-        JsonCompat.Populate(json, result);
-        return result;
+        // The subclasses have no converter of their own, so this reads them member by member.
+        return (DirigeraDevice?)json.Deserialize(type, options);
     }
 
     public override void Write(Utf8JsonWriter writer, DirigeraDevice value, JsonSerializerOptions options)
     {
-        JsonCompat.WriteDefault(writer, value, options);
+        JsonSerializer.Serialize(writer, value, value.GetType(), options);
     }
 }
 

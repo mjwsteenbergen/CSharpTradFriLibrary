@@ -1,13 +1,16 @@
-using ApiLibs.JSON.Serialization;
+using System.Text.Json;
+using Tomidix.NetStandard.Dirigera;
 using NUnit.Framework;
 using Tomidix.NetStandard.Dirigera.Devices;
 using Tomidix.NetStandard.Dirigera.Model.Events;
 
 namespace SerializationTest;
 
-/// <summary>Reads hub payloads the way DirigeraController and EventController do.</summary>
+/// <summary>Reads hub payloads with <see cref="DirigeraJson.Options"/>, as DirigeraController and EventController do.</summary>
 public class DirigeraSerializationTest
 {
+    private static T Read<T>(string json) => JsonSerializer.Deserialize<T>(json, DirigeraJson.Options)!;
+
     private const string Devices = """
         [
           {
@@ -33,7 +36,7 @@ public class DirigeraSerializationTest
     [Test]
     public void DevicesAreReadAsTheirSubclass()
     {
-        var devices = JsonCompat.Deserialize<List<DirigeraDevice>>(Devices);
+        var devices = Read<List<DirigeraDevice>>(Devices);
 
         Assert.That(devices, Has.Count.EqualTo(3));
         var desk = (Light)devices[0];
@@ -54,7 +57,7 @@ public class DirigeraSerializationTest
     [Test]
     public void ASingleDeviceCanBeReadAsItsSubclass()
     {
-        var light = JsonCompat.Deserialize<Light>("""{ "id": "light-2", "deviceType": "light", "attributes": { "isOn": true } }""");
+        var light = Read<Light>("""{ "id": "light-2", "deviceType": "light", "attributes": { "isOn": true } }""");
 
         Assert.That(light.Attributes.IsOn, Is.True);
     }
@@ -62,16 +65,16 @@ public class DirigeraSerializationTest
     [Test]
     public void AnUnknownDeviceTypeIsRejected()
     {
-        Assert.That(() => JsonCompat.Deserialize<DirigeraDevice>("""{ "id": "x", "deviceType": "blinds" }"""),
-            Throws.InstanceOf<ArgumentOutOfRangeException>());
+        Assert.That(() => Read<DirigeraDevice>("""{ "id": "x", "deviceType": "blinds" }"""),
+            Throws.InstanceOf<JsonException>());
     }
 
     [Test]
     public void ADeviceIsWrittenWithItsOwnMembers()
     {
-        var light = (Light)JsonCompat.Deserialize<List<DirigeraDevice>>(Devices)[0];
+        var light = (Light)Read<List<DirigeraDevice>>(Devices)[0];
 
-        var json = JsonCompat.Serialize(light);
+        var json = JsonSerializer.Serialize(light, DirigeraJson.Options);
 
         Assert.That(json, Does.Contain("\"id\":\"light-1\""));
         Assert.That(json, Does.Contain("\"colorTemperature\":2700"));
@@ -80,7 +83,7 @@ public class DirigeraSerializationTest
     [Test]
     public void AWaterLeakEventCarriesWaterSensorAttributes()
     {
-        var e = JsonCompat.Deserialize<DirigeraEvent>("""
+        var e = Read<DirigeraEvent>("""
             {
               "id": "evt-1", "time": "2024-06-01T10:00:00.000Z", "specversion": "1.1.0", "source": "urn:com:ikea:homesmart:iotc:ipdevice",
               "type": "deviceStateChanged",
@@ -98,7 +101,7 @@ public class DirigeraSerializationTest
     [Test]
     public void AnEventForAnUnknownDeviceKeepsItsAttributesAsJson()
     {
-        var e = (DirigeraStateChangedEvent)JsonCompat.Deserialize<DirigeraEvent>("""
+        var e = (DirigeraStateChangedEvent)Read<DirigeraEvent>("""
             { "id": "evt-2", "type": "deviceStateChanged", "data": { "id": "b-1", "deviceType": "blinds", "attributes": { "customName": "Bedroom", "blindsCurrentLevel": 40 } } }
             """);
 
@@ -111,10 +114,43 @@ public class DirigeraSerializationTest
     [Test]
     public void PongAndUnknownEventsAreRecognised()
     {
-        Assert.That(JsonCompat.Deserialize<DirigeraEvent>("""{ "type": "pong", "data": { "lastModified": "x" } }"""), Is.TypeOf<DirigeraPongEvent>());
+        Assert.That(Read<DirigeraEvent>("""{ "type": "pong", "data": { "lastModified": "x" } }"""), Is.TypeOf<DirigeraPongEvent>());
 
-        var unknown = JsonCompat.Deserialize<DirigeraEvent>("""{ "type": "sceneUpdated", "data": { "id": "scene-1" } }""");
+        var unknown = Read<DirigeraEvent>("""{ "type": "sceneUpdated", "data": { "id": "scene-1" } }""");
         Assert.That(unknown, Is.TypeOf<UnknownEvent>());
         Assert.That(((UnknownEvent)unknown).Type, Is.EqualTo("sceneUpdated"));
+    }
+
+    [Test]
+    public void DevicesCanAlsoBeReadWithDefaultOptions()
+    {
+        var devices = JsonSerializer.Deserialize<List<DirigeraDevice>>(Devices)!;
+
+        Assert.That(devices[0], Is.TypeOf<Light>());
+        Assert.That(((Light)devices[0]).Attributes, Is.TypeOf<TemperatureLightAttributes>());
+    }
+
+    [Test]
+    public void APingIsWrittenAsAFlatEvent()
+    {
+        var json = JsonSerializer.Serialize<DirigeraEvent>(new DirigeraPingEvent { Id = "1", Type = "ping", Specversion = "1.1.0", Source = "urn:test" }, DirigeraJson.Options);
+
+        Assert.That(json, Does.StartWith("{\"id\":\"1\""));
+        Assert.That(json, Does.Contain("\"type\":\"ping\""));
+    }
+
+    [Test]
+    public void AStateChangedEventSurvivesARoundTrip()
+    {
+        var e = Read<DirigeraEvent>("""
+            { "id": "evt-1", "type": "deviceStateChanged", "data": { "id": "water-1", "deviceType": "waterSensor", "attributes": { "waterLeakDetected": true, "batteryPercentage": 40 } } }
+            """);
+
+        var again = (DirigeraStateChangedEvent)Read<DirigeraEvent>(JsonSerializer.Serialize(e, DirigeraJson.Options));
+
+        Assert.That(again.Data.Id, Is.EqualTo("water-1"));
+        var attributes = (WaterSensorEventAttributes)again.Data.Attributes;
+        Assert.That(attributes.WaterLeakDetected, Is.True);
+        Assert.That(attributes.BatteryPercentage, Is.EqualTo(40));
     }
 }

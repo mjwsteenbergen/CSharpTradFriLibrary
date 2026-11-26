@@ -1,4 +1,4 @@
-﻿using ApiLibs.JSON.Serialization;
+﻿using System.Text.Json;
 using ApiLibs.JSON.General;
 using ApiLibs.JSON;
 using Com.AugustCellars.CoAP;
@@ -24,7 +24,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
         /// <returns></returns>
         public Task<TradfriDevice> GetTradfriDevice(long id)
         {
-            return MakeRequest<TradfriDevice>($"/{(int)TradfriConstRoot.Devices}/{id}");
+            return MakeRequest(TradfriJson.Request<TradfriDevice>($"/{(int)TradfriConstRoot.Devices}/{id}"));
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(response?.PayloadString))
                 {
-                    device = JsonCompat.Deserialize<TradfriDevice>(response.PayloadString);
+                    device = JsonSerializer.Deserialize<TradfriDevice>(response.PayloadString, TradfriJson.Options);
                     callback.Invoke(device, cancel);
                 }
             };

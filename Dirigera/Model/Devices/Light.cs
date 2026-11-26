@@ -1,31 +1,31 @@
-using ApiLibs.JSON.Serialization;
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
+/// <summary>
+/// Reads a light's attributes as <see cref="TemperatureLightAttributes"/> when the light reports a
+/// <c>colorMode</c>. Applied to <see cref="Light.Attributes"/> rather than to the type, so reading
+/// the chosen type does not come back here.
+/// </summary>
 public class LightAttributeConverter : JsonConverter<LightAttributes>
 {
-    public override LightAttributes Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override LightAttributes? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        JsonElement json;
-        using (var document = JsonDocument.ParseValue(ref reader))
-        {
-            json = document.RootElement.Clone();
-        }
+        using var document = JsonDocument.ParseValue(ref reader);
+        var json = document.RootElement;
 
-        LightAttributes result = json.ValueKind == JsonValueKind.Object && json.TryGetProperty("colorMode", out _)
-            ? new TemperatureLightAttributes()
-            : new LightAttributes();
+        Type type = json.ValueKind == JsonValueKind.Object && json.TryGetProperty("colorMode", out _)
+            ? typeof(TemperatureLightAttributes)
+            : typeof(LightAttributes);
 
-        JsonCompat.Populate(json, result);
-        return result;
+        return (LightAttributes?)json.Deserialize(type, options);
     }
 
     public override void Write(Utf8JsonWriter writer, LightAttributes value, JsonSerializerOptions options)
     {
-        JsonCompat.WriteDefault(writer, value, options);
+        JsonSerializer.Serialize(writer, value, value.GetType(), options);
     }
 }
 
@@ -34,6 +34,7 @@ public class LightAttributeConverter : JsonConverter<LightAttributes>
 public class Light : DirigeraDevice
 {
     [JsonPropertyName("attributes")]
+    [JsonConverter(typeof(LightAttributeConverter))]
     public LightAttributes Attributes { get; set; }
 
     [JsonPropertyName("room")]
@@ -62,7 +63,6 @@ public class Light : DirigeraDevice
     }
 }
 
-[JsonConverter(typeof(LightAttributeConverter))]
 public class LightAttributes : Attributes
 {
 

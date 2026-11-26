@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using ApiLibs.JSON;
 using Com.AugustCellars.CoAP;
 using Com.AugustCellars.CoAP.DTLS;
-using ApiLibs.JSON.Serialization;
 
 namespace Tomidix.NetStandard.Tradfri.Extensions
 {
@@ -69,7 +68,7 @@ namespace Tomidix.NetStandard.Tradfri.Extensions
             return content switch
             {
                 string text => text,
-                var randomObject => JsonCompat.Serialize(randomObject, ignoreNullValues: true)
+                var randomObject => TradfriJson.Serialize(randomObject)
             };
         }
 

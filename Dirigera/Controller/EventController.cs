@@ -1,7 +1,8 @@
+using System.Text.Json;
 using System.Net.WebSockets;
 using System.Text;
-using ApiLibs.General;
-using Newtonsoft.Json;
+using ApiLibs.JSON.General;
+using System.Text.Json.Serialization;
 using Tomidix.NetStandard.Dirigera.Model.Events;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
@@ -79,7 +80,7 @@ public class EventController : SubService<DirigeraController>
                     OnRaiseDirigeraEvent(new DirigeraEventArgs
                     {
                         Message = message,
-                        Event = JsonConvert.DeserializeObject<DirigeraEvent>(split[0])
+                        Event = JsonSerializer.Deserialize<DirigeraEvent>(split[0])
                     });
                 } 
                 catch (TaskCanceledException)
@@ -121,7 +122,7 @@ public class EventController : SubService<DirigeraController>
     /// <returns></returns>
     private async Task SendPingMessage()
     {
-        await SendMessage(new DirigeraEvent
+        await SendMessage(new DirigeraPingEvent
         {
             Id = Guid.NewGuid().ToString(),
             Specversion = "1.1.0",
@@ -133,7 +134,7 @@ public class EventController : SubService<DirigeraController>
 
     private Task SendMessage(DirigeraEvent data, CancellationToken? cancellationToken = null)
     {
-        return SendMessage(JsonConvert.SerializeObject(data), cancellationToken);
+        return SendMessage(JsonSerializer.Serialize(data), cancellationToken);
     }
 
     private Task SendMessage(string data, CancellationToken? cancellationToken = null)

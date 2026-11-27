@@ -1,20 +1,20 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 public class Gateway : DirigeraDevice
 {
-    [JsonProperty("relationId")]
+    [JsonPropertyName("relationId")]
     public string RelationId { get; set; }
 
-    [JsonProperty("deviceSet")]
+    [JsonPropertyName("deviceSet")]
     public object[] DeviceSet { get; set; }
 
-    [JsonProperty("remoteLinks")]
+    [JsonPropertyName("remoteLinks")]
     public object[] RemoteLinks { get; set; }
 
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public GatewayAttributes Attributes { get; set; }
 
     public override string GetName() => Attributes.CustomName;
@@ -27,55 +27,55 @@ public class Gateway : DirigeraDevice
 
 public partial class GatewayAttributes : Attributes
 {
-    [JsonProperty("backendConnected")]
+    [JsonPropertyName("backendConnected")]
     public bool BackendConnected { get; set; }
 
-    [JsonProperty("backendConnectionPersistent")]
+    [JsonPropertyName("backendConnectionPersistent")]
     public bool BackendConnectionPersistent { get; set; }
 
-    [JsonProperty("backendOnboardingComplete")]
+    [JsonPropertyName("backendOnboardingComplete")]
     public bool BackendOnboardingComplete { get; set; }
 
-    [JsonProperty("backendRegion")]
+    [JsonPropertyName("backendRegion")]
     public string BackendRegion { get; set; }
 
-    [JsonProperty("backendCountryCode")]
+    [JsonPropertyName("backendCountryCode")]
     public string BackendCountryCode { get; set; }
 
-    [JsonProperty("userConsents")]
+    [JsonPropertyName("userConsents")]
     public UserConsent[] UserConsents { get; set; }
 
-    [JsonProperty("logLevel")]
+    [JsonPropertyName("logLevel")]
     public long LogLevel { get; set; }
 
-    [JsonProperty("coredump")]
+    [JsonPropertyName("coredump")]
     public bool Coredump { get; set; }
 
-    [JsonProperty("timezone")]
+    [JsonPropertyName("timezone")]
     public string Timezone { get; set; }
 
-    [JsonProperty("nextSunSet")]
+    [JsonPropertyName("nextSunSet")]
     public object NextSunSet { get; set; }
 
-    [JsonProperty("nextSunRise")]
+    [JsonPropertyName("nextSunRise")]
     public object NextSunRise { get; set; }
 
-    [JsonProperty("homestate")]
+    [JsonPropertyName("homestate")]
     public string Homestate { get; set; }
 
-    [JsonProperty("countryCode")]
+    [JsonPropertyName("countryCode")]
     public string CountryCode { get; set; }
 
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool IsOn { get; set; }
 }
 
 public partial class UserConsent
 {
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonProperty("value")]
+    [JsonPropertyName("value")]
     public string Value { get; set; }
 }
 

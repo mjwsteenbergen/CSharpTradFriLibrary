@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -11,13 +11,13 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 /// </summary>
 public class ElectricalSensor : DirigeraDevice
 {
-    [JsonProperty("relationId")]
+    [JsonPropertyName("relationId")]
     public string RelationId { get; set; }
 
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public ElectricalSensorAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
     public override string GetName() => Attributes.CustomName;
 
@@ -29,25 +29,25 @@ public class ElectricalSensor : DirigeraDevice
 
 public class ElectricalSensorAttributes : Attributes
 {
-    [JsonProperty("currentActivePower")]
+    [JsonPropertyName("currentActivePower")]
     public double CurrentActivePower { get; set; }
 
-    [JsonProperty("currentAmps")]
+    [JsonPropertyName("currentAmps")]
     public double CurrentAmps { get; set; }
 
-    [JsonProperty("currentVoltage")]
+    [JsonPropertyName("currentVoltage")]
     public double CurrentVoltage { get; set; }
 
-    [JsonProperty("totalEnergyConsumed")]
+    [JsonPropertyName("totalEnergyConsumed")]
     public double TotalEnergyConsumed { get; set; }
 
-    [JsonProperty("totalEnergyConsumedLastUpdated")]
+    [JsonPropertyName("totalEnergyConsumedLastUpdated")]
     public DateTime TotalEnergyConsumedLastUpdated { get; set; }
 
-    [JsonProperty("energyConsumedAtLastReset")]
+    [JsonPropertyName("energyConsumedAtLastReset")]
     public double EnergyConsumedAtLastReset { get; set; }
 
-    [JsonProperty("timeOfLastEnergyReset")]
+    [JsonPropertyName("timeOfLastEnergyReset")]
     public DateTime TimeOfLastEnergyReset { get; set; }
 }
 

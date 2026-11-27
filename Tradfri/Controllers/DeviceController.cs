@@ -1,7 +1,8 @@
-﻿using ApiLibs.General;
-using ApiLibs;
+﻿using System.Text.Json;
+using ApiLibs.JSON.General;
+using ApiLibs.JSON;
 using Com.AugustCellars.CoAP;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -361,7 +362,7 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(response?.PayloadString))
                 {
-                    device = JsonConvert.DeserializeObject<TradfriDevice>(response.PayloadString);
+                    device = JsonSerializer.Deserialize<TradfriDevice>(response.PayloadString);
                     callback.Invoke(device, cancel);
                 }
             };
@@ -375,94 +376,94 @@ namespace Tomidix.NetStandard.Tradfri.Controllers
     }
     internal class RenameRequest
     {
-        [JsonProperty("9001")]
+        [JsonPropertyName("9001")]
         public string Name { get; set; }
     }
 
     internal class SwitchStateLightRequest
     {
-        [JsonProperty("3311")]
+        [JsonPropertyName("3311")]
         public SwitchStateLightRequestOption[] Options { get; set; }
     }
 
     internal class SwitchStateLightXYRequest
     {
-        [JsonProperty("3311")]
+        [JsonPropertyName("3311")]
         public SwitchStateLightXYRequestOption[] Options { get; set; }
     }
 
     internal class SwitchStateLightHSRequest
     {
-        [JsonProperty("3311")]
+        [JsonPropertyName("3311")]
         public SwitchStateLightHSRequestOption[] Options { get; set; }
     }
 
     internal class SwitchStateOutletRequest
     {
-        [JsonProperty("3312")]
+        [JsonPropertyName("3312")]
         public SwitchStateLightRequestOption[] Options { get; set; }
     }
 
     internal class SwitchStateBlindRequest
     {
-        [JsonProperty("15015")]
+        [JsonPropertyName("15015")]
         public SwitchStateBlindRequestOption[] Options { get; set; }
     }
 
     internal class SwitchStateRequestOption
     {
-        [JsonProperty("5850")]
+        [JsonPropertyName("5850")]
         public int? IsOn { get; set; }
     }
 
     internal class SwitchStateLightRequestOption : SwitchStateRequestOption
     {
-        [JsonProperty("5851")] //TradfriConstAttr.LightDimmer
+        [JsonPropertyName("5851")] //TradfriConstAttr.LightDimmer
         public int? LightIntensity { get; set; }
 
-        [JsonProperty("5706")]
+        [JsonPropertyName("5706")]
         public string Color { get; set; }
 
-        [JsonProperty("5712")]
+        [JsonPropertyName("5712")]
         public int? TransitionTime { get; set; }
 
-        [JsonProperty("9039")] //TradfriConstAttr.Mood
+        [JsonPropertyName("9039")] //TradfriConstAttr.Mood
         public long? Mood { get; set; }
     }
 
     internal class SwitchStateLightXYRequestOption : SwitchStateRequestOption
     {
-        [JsonProperty("5851")] //TradfriConstAttr.LightDimmer
+        [JsonPropertyName("5851")] //TradfriConstAttr.LightDimmer
         public int? LightIntensity { get; set; }
 
-        [JsonProperty("5709")]
+        [JsonPropertyName("5709")]
         public int ColorX { get; set; }
 
-        [JsonProperty("5710")]
+        [JsonPropertyName("5710")]
         public int ColorY { get; set; }
 
-        [JsonProperty("5712")]
+        [JsonPropertyName("5712")]
         public int? TransitionTime { get; set; }
     }
 
     internal class SwitchStateLightHSRequestOption : SwitchStateRequestOption
     {
-        [JsonProperty("5851")] //TradfriConstAttr.LightDimmer
+        [JsonPropertyName("5851")] //TradfriConstAttr.LightDimmer
         public int? LightIntensity { get; set; }
 
-        [JsonProperty("5707")]
+        [JsonPropertyName("5707")]
         public int ColorHue { get; set; }
 
-        [JsonProperty("5708")]
+        [JsonPropertyName("5708")]
         public int ColorSaturation { get; set; }
 
-        [JsonProperty("5712")]
+        [JsonPropertyName("5712")]
         public int? TransitionTime { get; set; }
     }
 
     internal class SwitchStateBlindRequestOption
     {
-        [JsonProperty("5536")]
+        [JsonPropertyName("5536")]
         public int? Position { get; set; }
     }
 }

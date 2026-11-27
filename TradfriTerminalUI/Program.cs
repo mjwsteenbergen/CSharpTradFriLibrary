@@ -1,7 +1,7 @@
 ﻿
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using Spectre.Console;
-using Martijn.Extensions.Memory;
+using Martijn.Extensions.JSON.Memory;
 using System.Net;
 using Tomidix.NetStandard.Dirigera.Controller;
 using Tomidix.NetStandard.Dirigera.Devices;
@@ -10,13 +10,13 @@ namespace TradfriTerminalUI
 {
     public class UserData
     {
-        [JsonProperty("ip")]
+        [JsonPropertyName("ip")]
         public string? IPAddress { get; set; }
 
-        [JsonProperty("access_token")]
+        [JsonPropertyName("access_token")]
         public string? AccessToken { get; set; }
 
-        [JsonProperty("hub_name")]
+        [JsonPropertyName("hub_name")]
         public string? HubName { get; set; }
     }
 

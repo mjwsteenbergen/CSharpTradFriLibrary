@@ -1,8 +1,8 @@
-using ApiLibs.General;
+using ApiLibs.JSON.General;
 using Tomidix.NetStandard.Dirigera.Devices;
-using Newtonsoft.Json;
-using ApiLibs;
-using Martijn.Extensions.Linq;
+using System.Text.Json.Serialization;
+using ApiLibs.JSON;
+using Martijn.Extensions.JSON.Linq;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
 
@@ -113,11 +113,11 @@ public class PostingAttributes<T> : PostingAttributes where T : EventAttributes
         Attributes = properties;
     }
 
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public T Attributes { get; set; }
 
 
-    [JsonProperty("transitionTime")]
+    [JsonPropertyName("transitionTime")]
     public int? TransitionTime { get; set; }
 }
 

@@ -1,5 +1,5 @@
-﻿using ApiLibs;
-using ApiLibs.General;
+﻿using ApiLibs.JSON;
+using ApiLibs.JSON.General;
 using System;
 using System.Net;
 using System.Threading.Tasks;

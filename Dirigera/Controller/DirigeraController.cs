@@ -1,8 +1,8 @@
 ﻿using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
-using ApiLibs;
-using Newtonsoft.Json;
+using ApiLibs.JSON;
+using System.Text.Json.Serialization;
 using RestSharp;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
@@ -92,12 +92,12 @@ public class DirigeraController : RestSharpService
 
 public class Authorize
 {
-    [JsonProperty("code")]
+    [JsonPropertyName("code")]
     public required string Code { get; set; }
 }
 
 public class TokenObject
 {
-    [JsonProperty("access_token")]
+    [JsonPropertyName("access_token")]
     public required string AccessToken { get; set; }
 }

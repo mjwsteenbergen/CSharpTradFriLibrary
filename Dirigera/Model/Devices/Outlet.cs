@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -9,10 +8,10 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class Outlet : DirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public OutletAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
     public override string GetName() => Attributes.CustomName;
 
@@ -30,84 +29,84 @@ public class Outlet : DirigeraDevice
 
 public class OutletAttributes : Attributes
 {
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool IsOn { get; set; }
 
-    [JsonProperty("startupOnOff")]
+    [JsonPropertyName("startupOnOff")]
     public string StartupOnOff { get; set; }
 
-    [JsonProperty("lightLevel")]
+    [JsonPropertyName("lightLevel")]
     public long LightLevel { get; set; }
 
-    [JsonProperty("startUpCurrentLevel")]
+    [JsonPropertyName("startUpCurrentLevel")]
     public long StartUpCurrentLevel { get; set; }
 
-    [JsonProperty("currentVoltage")]
+    [JsonPropertyName("currentVoltage")]
     public long CurrentVoltage { get; set; }
 
-    [JsonProperty("currentAmps")]
+    [JsonPropertyName("currentAmps")]
     public long CurrentAmps { get; set; }
 
-    [JsonProperty("currentActivePower")]
+    [JsonPropertyName("currentActivePower")]
     public long CurrentActivePower { get; set; }
 
-    [JsonProperty("totalEnergyConsumed")]
+    [JsonPropertyName("totalEnergyConsumed")]
     public long TotalEnergyConsumed { get; set; }
 
-    [JsonProperty("totalEnergyConsumedLastUpdated")]
+    [JsonPropertyName("totalEnergyConsumedLastUpdated")]
     public DateTime TotalEnergyConsumedLastUpdated { get; set; }
 
-    [JsonProperty("energyConsumedAtLastReset")]
+    [JsonPropertyName("energyConsumedAtLastReset")]
     public long EnergyConsumedAtLastReset { get; set; }
 
-    [JsonProperty("timeOfLastEnergyReset")]
+    [JsonPropertyName("timeOfLastEnergyReset")]
     public DateTime TimeOfLastEnergyReset { get; set; }
 
-    [JsonProperty("childLock")]
+    [JsonPropertyName("childLock")]
     public bool ChildLock { get; set; }
 
-    [JsonProperty("statusLight")]
+    [JsonPropertyName("statusLight")]
     public bool StatusLight { get; set; }
 }
 
 public class OutletEventAttributes : EventAttributes
 {
-    [JsonProperty("isOn")]
+    [JsonPropertyName("isOn")]
     public bool? IsOn { get; set; }
 
-    [JsonProperty("startupOnOff")]
+    [JsonPropertyName("startupOnOff")]
     public string? StartupOnOff { get; set; }
 
-    [JsonProperty("lightLevel")]
+    [JsonPropertyName("lightLevel")]
     public long? LightLevel { get; set; }
 
-    [JsonProperty("startUpCurrentLevel")]
+    [JsonPropertyName("startUpCurrentLevel")]
     public long? StartUpCurrentLevel { get; set; }
 
-    [JsonProperty("currentVoltage")]
+    [JsonPropertyName("currentVoltage")]
     public double? CurrentVoltage { get; set; }
 
-    [JsonProperty("currentAmps")]
+    [JsonPropertyName("currentAmps")]
     public double? CurrentAmps { get; set; }
 
-    [JsonProperty("currentActivePower")]
+    [JsonPropertyName("currentActivePower")]
     public double? CurrentActivePower { get; set; }
 
-    [JsonProperty("totalEnergyConsumed")]
+    [JsonPropertyName("totalEnergyConsumed")]
     public double? TotalEnergyConsumed { get; set; }
 
-    [JsonProperty("totalEnergyConsumedLastUpdated")]
+    [JsonPropertyName("totalEnergyConsumedLastUpdated")]
     public DateTime? TotalEnergyConsumedLastUpdated { get; set; }
 
-    [JsonProperty("energyConsumedAtLastReset")]
+    [JsonPropertyName("energyConsumedAtLastReset")]
     public double? EnergyConsumedAtLastReset { get; set; }
 
-    [JsonProperty("timeOfLastEnergyReset")]
+    [JsonPropertyName("timeOfLastEnergyReset")]
     public DateTime? TimeOfLastEnergyReset { get; set; }
 
-    [JsonProperty("childLock")]
+    [JsonPropertyName("childLock")]
     public bool? ChildLock { get; set; }
 
-    [JsonProperty("statusLight")]
+    [JsonPropertyName("statusLight")]
     public bool? StatusLight { get; set; }
 }

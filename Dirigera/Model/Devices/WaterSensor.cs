@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Devices;
 
@@ -9,10 +8,10 @@ namespace Tomidix.NetStandard.Dirigera.Devices;
 
 public class WaterSensor : DirigeraDevice
 {
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public WaterSensorAttributes Attributes { get; set; }
 
-    [JsonProperty("room")]
+    [JsonPropertyName("room")]
     public Room Room { get; set; }
     public override string GetName() => Attributes.CustomName;
 
@@ -25,18 +24,18 @@ public class WaterSensor : DirigeraDevice
 
 public class WaterSensorAttributes : Attributes
 {
-    [JsonProperty("waterLeakDetected")]
+    [JsonPropertyName("waterLeakDetected")]
     public bool WaterLeakDetected { get; set; }
 
-    [JsonProperty("batteryPercentage")]
+    [JsonPropertyName("batteryPercentage")]
     public int BatteryPercentage { get; set; }
 }
 
 public class WaterSensorEventAttributes : EventAttributes
 {
-    [JsonProperty("waterLeakDetected")]
+    [JsonPropertyName("waterLeakDetected")]
     public bool? WaterLeakDetected { get; set; }
 
-    [JsonProperty("batteryPercentage")]
+    [JsonPropertyName("batteryPercentage")]
     public int? BatteryPercentage { get; set; }
 }

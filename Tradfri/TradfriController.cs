@@ -1,9 +1,9 @@
-﻿using ApiLibs;
-using ApiLibs.General;
+﻿using ApiLibs.JSON;
+using ApiLibs.JSON.General;
 using Com.AugustCellars.CoAP;
 using Com.AugustCellars.CoAP.DTLS;
 using Com.AugustCellars.COSE;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using PeterO.Cbor;
 using System;
 using System.Collections.Generic;

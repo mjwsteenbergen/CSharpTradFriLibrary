@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using Tomidix.NetStandard.Tradfri.Extensions;
@@ -37,118 +37,118 @@ namespace Tomidix.NetStandard.Tradfri.Models
 
     public class TradfriDevice
     {
-        [JsonProperty("15009")]
+        [JsonPropertyName("15009")]
         public List<RootSwitch> RootSwitch { get; set; }
 
-        [JsonProperty("3")]
+        [JsonPropertyName("3")]
         public DeviceInfo Info { get; set; }
 
         //0 - remote, 2 - light
-        [JsonProperty("5750")]
+        [JsonPropertyName("5750")]
         public DeviceType DeviceType { get; set; }
 
-        [JsonProperty("9001")]
+        [JsonPropertyName("9001")]
         public string Name { get; set; }
 
-        [JsonProperty("9002")]
+        [JsonPropertyName("9002")]
         [JsonConverter(typeof(MicrosecondEpochConverter))]
         public DateTime CreatedAt { get; set; }
 
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public long ID { get; set; }
 
-        [JsonProperty("9019")]
+        [JsonPropertyName("9019")]
         public long ReachableState { get; set; }
 
-        [JsonProperty("9020")]
+        [JsonPropertyName("9020")]
         [JsonConverter(typeof(MicrosecondEpochConverter))]
         public DateTime LastSeen { get; set; }
 
-        [JsonProperty("9054")]
+        [JsonPropertyName("9054")]
         public long OtaUpdateState { get; set; }
 
-        [JsonProperty("3311")]
+        [JsonPropertyName("3311")]
         public List<LightControl> LightControl { get; set; }
 
-        [JsonProperty("3312")]
+        [JsonPropertyName("3312")]
         public List<Control> Control { get; set; }
 
-        [JsonProperty("15015")]
+        [JsonPropertyName("15015")]
         public List<Blind> Blind { get; set; }
     }
 
     public class DeviceInfo
     {
-        [JsonProperty("0")]
+        [JsonPropertyName("0")]
         public string Manufacturer { get; set; }
 
-        [JsonProperty("1")]
+        [JsonPropertyName("1")]
         public string DeviceType { get; set; }
 
-        [JsonProperty("2")]
+        [JsonPropertyName("2")]
         public string Serial { get; set; }
 
-        [JsonProperty("3")]
+        [JsonPropertyName("3")]
         public string FirmwareVersion { get; set; }
 
-        [JsonProperty("6")]
+        [JsonPropertyName("6")]
         public PowerSource PowerSource { get; set; }
 
-        [JsonProperty("9")]
+        [JsonPropertyName("9")]
         public long Battery { get; set; }
     }
 
     public class RootSwitch
     {
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public long RootSwitchID { get; set; }
     }
 
     public class Control
     {
-        [JsonProperty("5850")]
+        [JsonPropertyName("5850")]
         public Bool? State { get; set; }
 
-        [JsonProperty("5851")]
+        [JsonPropertyName("5851")]
         public long Dimmer { get; set; }
 
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public long ID { get; set; }
     }
 
     public class LightControl : Control
     {
-        [JsonProperty("5706")]
+        [JsonPropertyName("5706")]
         public string ColorHex { get; set; }
 
-        [JsonProperty("5707")]
+        [JsonPropertyName("5707")]
         public long ColorHue { get; set; }
 
-        [JsonProperty("5708")]
+        [JsonPropertyName("5708")]
         public long ColorSaturation { get; set; }
 
-        [JsonProperty("5709")]
+        [JsonPropertyName("5709")]
         public long ColorX { get; set; }
 
-        [JsonProperty("5710")]
+        [JsonPropertyName("5710")]
         public long ColorY { get; set; }
 
-        [JsonProperty("5711")]
+        [JsonPropertyName("5711")]
         public long Mireds { get; set; }
     }
 
     public class Blind
     {
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public long ID { get; set; }
 
-        [JsonProperty("5536")]
+        [JsonPropertyName("5536")]
         public long Position { get; set; }
     }
 
     public class DeviceList
     {
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public List<long> DevicesIds { get; set; }
     }
 }

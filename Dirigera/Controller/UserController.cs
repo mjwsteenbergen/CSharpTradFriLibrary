@@ -1,10 +1,10 @@
 using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
-using ApiLibs;
-using ApiLibs.General;
-using ApiLibs.GitHub;
-using Newtonsoft.Json;
+using ApiLibs.JSON;
+using ApiLibs.JSON.General;
+using ApiLibs.JSON.GitHub;
+using System.Text.Json.Serialization;
 
 namespace Tomidix.NetStandard.Dirigera.Controller;
 
@@ -21,25 +21,25 @@ public class UserController : SubService<DirigeraController>
 
 public class User
 {
-    [JsonProperty("uid")]
+    [JsonPropertyName("uid")]
     public required string UID { get; set; }
 
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public required string Name { get; set; }
 
-    [JsonProperty("audience")]
+    [JsonPropertyName("audience")]
     public required string Audience { get; set; }
 
-    [JsonProperty("email")]
+    [JsonPropertyName("email")]
     public required string Email { get; set; }
 
-    // [JsonProperty("createdTimestamp")]
+    // [JsonPropertyName("createdTimestamp")]
     // public string CreatedTimestamp { get; set; }
 
-    [JsonProperty("verifiedUid")]
+    [JsonPropertyName("verifiedUid")]
     public required string VerifiedUid { get; set; }
 
-    [JsonProperty("role")]
+    [JsonPropertyName("role")]
     public required string Role { get; set; }
 
 }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using Tomidix.NetStandard.Tradfri.Extensions;
@@ -7,38 +7,38 @@ namespace Tomidix.NetStandard.Tradfri.Models
 {
     public class TradfriGroup
     {
-        [JsonProperty("5850")]
+        [JsonPropertyName("5850")]
         public long LightState { get; set; }
 
-        [JsonProperty("5851")]
+        [JsonPropertyName("5851")]
         public long LightDimmer { get; set; }
 
-        [JsonProperty("9001")]
+        [JsonPropertyName("9001")]
         public string Name { get; set; }
 
-        [JsonProperty("9002")]
+        [JsonPropertyName("9002")]
         [JsonConverter(typeof(MicrosecondEpochConverter))]
         public DateTime CreatedAt { get; set; }
 
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public long ID { get; set; }
 
-        [JsonProperty("9018")]
+        [JsonPropertyName("9018")]
         public The9018 Devices { get; set; }
 
-        [JsonProperty("9039")]
+        [JsonPropertyName("9039")]
         public long ActiveMood { get; set; }
     }
 
     public class The9018
     {
-        [JsonProperty("15002")]
+        [JsonPropertyName("15002")]
         public The15002 The15002 { get; set; }
     }
 
     public class The15002
     {
-        [JsonProperty("9003")]
+        [JsonPropertyName("9003")]
         public List<long> ID { get; set; }
     }
 }
